@@ -55,7 +55,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "test": "vscode-test"
   },
   "devDependencies": {
@@ -64,9 +64,8 @@
     "@types/vscode": "^1.140.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
-    "eslint": "^10.5.0",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1"
+    "oxlint": "^1.90.0",
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "diff": "^8.0.4",
