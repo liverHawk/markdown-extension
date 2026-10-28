@@ -1,26 +1,64 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { ChecklistPreviewPanel } from './previewPanel.js';
+import { toggleTaskStatus } from './taskToggler.js';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  // Command: Open Interactive Preview
+  const openPreviewCommand = vscode.commands.registerCommand(
+    'checklist-markdown.openPreview',
+    () => {
+      const activeEditor = vscode.window.activeTextEditor;
+      if (!activeEditor || activeEditor.document.languageId !== 'markdown') {
+        vscode.window.showInformationMessage(
+          'Please open a Markdown file to view the checklist preview.'
+        );
+        return;
+      }
+      ChecklistPreviewPanel.createOrShow(context.extensionUri, activeEditor.document);
+    }
+  );
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "checklist-markdown" is now active!');
+  // Command: Toggle task on current cursor line in editor
+  const toggleCurrentTaskCommand = vscode.commands.registerCommand(
+    'checklist-markdown.toggleCurrentTask',
+    async () => {
+      const activeEditor = vscode.window.activeTextEditor;
+      if (!activeEditor || activeEditor.document.languageId !== 'markdown') {
+        return;
+      }
+      const line = activeEditor.selection.active.line;
+      await toggleTaskStatus(activeEditor.document, line);
+    }
+  );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('checklist-markdown.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Checklist Markdown!');
-	});
+  // Auto-update preview when markdown document changes
+  const onDidChangeTextDocument = vscode.workspace.onDidChangeTextDocument((event) => {
+    if (ChecklistPreviewPanel.currentPanel) {
+      ChecklistPreviewPanel.currentPanel.onDocumentChanged(event.document);
+    }
+  });
 
-	context.subscriptions.push(disposable);
+  // Track active editor switch
+  const onDidChangeActiveTextEditor = vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (
+      editor &&
+      editor.document.languageId === 'markdown' &&
+      ChecklistPreviewPanel.currentPanel
+    ) {
+      ChecklistPreviewPanel.currentPanel.changeDocument(editor.document);
+    }
+  });
+
+  context.subscriptions.push(
+    openPreviewCommand,
+    toggleCurrentTaskCommand,
+    onDidChangeTextDocument,
+    onDidChangeActiveTextEditor
+  );
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  if (ChecklistPreviewPanel.currentPanel) {
+    ChecklistPreviewPanel.currentPanel.dispose();
+  }
+}

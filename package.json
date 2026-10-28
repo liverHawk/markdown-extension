@@ -9,13 +9,44 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "checklist-markdown.helloWorld",
-        "title": "Hello World"
+        "command": "checklist-markdown.openPreview",
+        "title": "Checklist Markdown: Open Interactive Preview",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "checklist-markdown.toggleCurrentTask",
+        "title": "Checklist Markdown: Toggle Task on Current Line"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "checklist-markdown.openPreview",
+          "when": "editorLangId == markdown",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "checklist-markdown.toggleCurrentTask",
+          "when": "editorLangId == markdown",
+          "group": "modification"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "checklist-markdown.toggleCurrentTask",
+        "key": "alt+x",
+        "mac": "alt+x",
+        "when": "editorTextFocus && editorLangId == markdown"
       }
     ]
   },
@@ -28,17 +59,20 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.140.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
-    "typescript-eslint": "^8.61.1",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
     "eslint": "^10.5.0",
     "typescript": "^6.0.3",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0"
+    "typescript-eslint": "^8.61.1"
   },
   "overrides": {
     "diff": "^8.0.4",
     "serialize-javascript": "^7.0.6"
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.3"
   }
 }

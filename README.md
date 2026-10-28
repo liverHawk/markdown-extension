@@ -1,71 +1,52 @@
-# checklist-markdown README
+# Checklist Markdown
 
-This is the README for your extension "checklist-markdown". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチなプレビューで表示し、**チェックボックスをクリックすることで元のMarkdownファイルの内容を即座に更新できる** VS Code 拡張機能です。
 
 ---
 
-## Following extension guidelines
+## ✨ 主な機能 (Features)
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+1. **GitHubスタイルのインタラクティブプレビュー**
+   - GitHub Markdown風のデザインでTodoリストやテキストを美しくレンダリングします。
+   - ダークテーマ・ライトテーマの両方に自動適応します。
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+2. **チェックボックスと元のMarkdownの双方向同期**
+   - プレビュー上のチェックボックスをクリックすると、元のMarkdownファイル上の該当行の `[ ]` と `[x]` が即座に書き換わります。
+   - エディタ側でMarkdownを直接編集した場合も、リアルタイムにプレビューへ反映されます。
+   - エディタのUndo / Redo（元に戻す / やり直す）履歴にも安全に記録されます。
 
-## Working with Markdown
+3. **TODO進捗バーの表示**
+   - ファイル内のタスク数と完了率（例: `3 of 5 tasks completed (60%)`）を上部に自動集計・プログレスバー表示します。
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+4. **クイックジャンプ**
+   - プレビュー上のタスク行をダブルクリックすると、エディタの該当行へ即座にカーソルがジャンプします。
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+5. **エディタショートカットキー**
+   - エディタ上でタスク行にカーソルを置き、`Alt + X` を押すだけでチェック状態（`[ ]` ↔ `[x]`）をトグルできます。
 
-## For more information
+---
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## 🚀 使い方 (Usage)
 
-**Enjoy!**
+1. `.md`（Markdown）ファイルを開きます。
+2. エディタ右上の **チェックリストアイコン**（`Checklist Markdown: Open Interactive Preview`）をクリックします。
+   - または、コマンドパレット（`F1` または `Ctrl+Shift+P` / `Cmd+Shift+P`）を開き、`Checklist Markdown: Open Interactive Preview` を実行します。
+3. エディタの横にGitHubスタイルのプレビューが表示されます。
+4. チェックボックスをクリックして、タスクの完了・未完了を切り替えます。元のMarkdownファイルが自動更新されます！
+
+---
+
+## ⌨️ ショートカット & コマンド
+
+| コマンド | キーバインド | 説明 |
+|---|---|---|
+| `Checklist Markdown: Open Interactive Preview` | - | インタラクティブなチェックリストプレビューを横に開く |
+| `Checklist Markdown: Toggle Task on Current Line` | `Alt + X` | エディタの現在行のタスク状態をトグルする |
+
+---
+
+## 🛠 開発とデバッグ
+
+1. `F5` キーを押して、拡張機能開発用ホスト（Extension Development Host）を起動します。
+2. 開いた新しいVS Codeウィンドウで、同梱の `sample.md` などのMarkdownファイルを開きます。
+3. エディタ右上のチェックリストアイコンをクリックしてプレビューをお試しください。
