@@ -1,18 +1,39 @@
 {
   "name": "checklist-markdown",
   "displayName": "Checklist Markdown",
-  "description": "switch display from md to checkbox and edit status of todo list.",
   "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.140.0"
-  },
+  "description": "switch display from md to checkbox and edit status of todo list.",
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onLanguage:markdown"
-  ],
   "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint && pnpm run fmt:check",
+    "lint": "oxlint src",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "markdown-it": "^15.0.3"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  },
   "contributes": {
     "commands": [
       {
@@ -50,28 +71,10 @@
       }
     ]
   },
-  "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "oxlint src",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@types/mocha": "^10.0.10",
-    "@types/node": "24.x",
-    "@types/vscode": "^1.140.0",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0",
-    "oxlint": "^1.90.0",
-    "typescript": "^6.0.3"
-  },
-  "overrides": {
-    "diff": "^8.0.4",
-    "serialize-javascript": "^7.0.6"
-  },
-  "dependencies": {
-    "markdown-it": "^15.0.3"
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "engines": {
+    "vscode": "^1.140.0"
   }
 }

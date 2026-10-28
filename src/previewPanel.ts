@@ -18,7 +18,11 @@ export class ChecklistPreviewPanel {
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
 
-    const targetColumn = column ? (column === vscode.ViewColumn.One ? vscode.ViewColumn.Two : vscode.ViewColumn.Beside) : vscode.ViewColumn.Beside;
+    const targetColumn = column
+      ? column === vscode.ViewColumn.One
+        ? vscode.ViewColumn.Two
+        : vscode.ViewColumn.Beside
+      : vscode.ViewColumn.Beside;
 
     if (ChecklistPreviewPanel.currentPanel) {
       ChecklistPreviewPanel.currentPanel._panel.reveal(targetColumn, true);
@@ -63,13 +67,15 @@ export class ChecklistPreviewPanel {
       async (message) => {
         switch (message.command) {
           case 'toggleTask': {
-            const line = typeof message.line === 'number' ? message.line : parseInt(message.line, 10);
+            const line =
+              typeof message.line === 'number' ? message.line : parseInt(message.line, 10);
             const checked = Boolean(message.checked);
             await toggleTaskStatus(this._document, line, checked);
             break;
           }
           case 'revealLine': {
-            const line = typeof message.line === 'number' ? message.line : parseInt(message.line, 10);
+            const line =
+              typeof message.line === 'number' ? message.line : parseInt(message.line, 10);
             const editor = vscode.window.visibleTextEditors.find(
               (e) => e.document.uri.toString() === this._document.uri.toString()
             );

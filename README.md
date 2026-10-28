@@ -38,10 +38,10 @@ MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチ
 
 ## ⌨️ ショートカット & コマンド
 
-| コマンド | キーバインド | 説明 |
-|---|---|---|
-| `Checklist Markdown: Open Interactive Preview` | - | インタラクティブなチェックリストプレビューを横に開く |
-| `Checklist Markdown: Toggle Task on Current Line` | `Alt + X` | エディタの現在行のタスク状態をトグルする |
+| コマンド                                          | キーバインド | 説明                                                 |
+| ------------------------------------------------- | ------------ | ---------------------------------------------------- |
+| `Checklist Markdown: Open Interactive Preview`    | -            | インタラクティブなチェックリストプレビューを横に開く |
+| `Checklist Markdown: Toggle Task on Current Line` | `Alt + X`    | エディタの現在行のタスク状態をトグルする             |
 
 ---
 

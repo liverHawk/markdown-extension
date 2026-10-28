@@ -16,20 +16,14 @@ suite('Markdown Parser Test Suite', () => {
     assert.ok(html.includes('task-list-item'), 'Should have task-list-item class');
 
     // Check line 1 for first task
-    assert.ok(
-      html.includes('data-line="1"'),
-      'First task should map to line 1'
-    );
+    assert.ok(html.includes('data-line="1"'), 'First task should map to line 1');
     // Check line 2 for second task
     assert.ok(
       html.includes('data-line="2" checked'),
       'Second task should map to line 2 and be checked'
     );
     // Check line 4 for ordered task
-    assert.ok(
-      html.includes('data-line="4"'),
-      'Ordered task should map to line 4'
-    );
+    assert.ok(html.includes('data-line="4"'), 'Ordered task should map to line 4');
   });
 
   test('Preserves markdown formatting inside task list item', () => {

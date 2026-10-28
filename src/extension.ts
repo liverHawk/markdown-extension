@@ -40,11 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Track active editor switch
   const onDidChangeActiveTextEditor = vscode.window.onDidChangeActiveTextEditor((editor) => {
-    if (
-      editor &&
-      editor.document.languageId === 'markdown' &&
-      ChecklistPreviewPanel.currentPanel
-    ) {
+    if (editor && editor.document.languageId === 'markdown' && ChecklistPreviewPanel.currentPanel) {
       ChecklistPreviewPanel.currentPanel.changeDocument(editor.document);
     }
   });

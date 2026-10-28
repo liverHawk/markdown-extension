@@ -73,7 +73,10 @@ export function createMarkdownRenderer(rawMarkdown: string): InstanceType<typeof
       const currentLiClass = String(listItem.attrGet('class') || '');
       listItem.attrSet(
         'class',
-        (currentLiClass + (isChecked ? ' task-list-item task-list-item-checked' : ' task-list-item')).trim()
+        (
+          currentLiClass +
+          (isChecked ? ' task-list-item task-list-item-checked' : ' task-list-item')
+        ).trim()
       );
 
       // Find parent list (bullet_list_open or ordered_list_open) and add contains-task-list class
