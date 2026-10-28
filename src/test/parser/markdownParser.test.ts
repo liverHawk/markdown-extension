@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { renderMarkdown } from '../markdownParser.js';
+import { renderMarkdown } from '../../parser/markdownParser.js';
 
 suite('Markdown Parser Test Suite', () => {
   test('Renders unchecked and checked task items with correct line numbers', () => {

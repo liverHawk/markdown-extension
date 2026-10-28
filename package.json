@@ -6,6 +6,7 @@
   "categories": [
     "Other"
   ],
+  "publisher": "purple-hawk",
   "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "pnpm run compile",

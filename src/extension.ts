@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { ChecklistPreviewPanel } from './previewPanel.js';
-import { toggleTaskStatus } from './taskToggler.js';
+import { ChecklistPreviewPanel } from './preview/previewPanel.js';
+import { toggleTaskStatus } from './editor/taskToggler.js';
 
 export function activate(context: vscode.ExtensionContext) {
   // Command: Open Interactive Preview

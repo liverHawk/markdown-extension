@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { renderMarkdown } from './markdownParser.js';
+import { renderMarkdown } from '../parser/markdownParser.js';
 import { getStyles } from './styles.js';
-import { toggleTaskStatus, TASK_REGEX } from './taskToggler.js';
+import { toggleTaskStatus, TASK_REGEX } from '../editor/taskToggler.js';
 
 export class ChecklistPreviewPanel {
   public static currentPanel: ChecklistPreviewPanel | undefined;
