@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
-    "@types/vscode": "^1.140.0",
+    "@types/vscode": "^1.90.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "^4.0.0",
@@ -87,6 +87,6 @@
     "onLanguage:markdown"
   ],
   "engines": {
-    "vscode": "^1.140.0"
+    "vscode": "^1.90.0"
   }
 }
