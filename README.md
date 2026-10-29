@@ -50,18 +50,3 @@ MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチ
 1. `F5` キーを押して、拡張機能開発用ホスト（Extension Development Host）を起動します。
 2. 開いた新しいVS Codeウィンドウで、同梱の `sample.md` などのMarkdownファイルを開きます。
 3. エディタ右上のチェックリストアイコンをクリックしてプレビューをお試しください。
-
----
-
-## 📦 リリース手順 (Releasing)
-
-ローカルからワンコマンドで、バージョン更新・テスト・VSIXビルド・GitHub Releases・各マーケットプレイス（VS Code Marketplace / Open VSX）への一括公開が可能です。
-
-```bash
-pnpm run release patch   # 0.0.1 -> 0.0.2 (バグ修正など)
-pnpm run release minor   # 0.0.1 -> 0.1.0 (新機能追加など)
-pnpm run release major   # 0.0.1 -> 1.0.0 (メジャーアップデート)
-pnpm run release current # 現行バージョンのまま再リリース
-```
-
-詳しいオプションや初回認証設定については [docs/release.md](docs/release.md) をご覧ください。
