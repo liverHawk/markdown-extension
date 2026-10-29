@@ -1,4 +1,16 @@
 #!/usr/bin/env bash
+# ==============================================================================
+# Release Automation Script for checklist-markdown
+# 
+# Usage:
+#   pnpm run release patch    # Bump patch (0.0.1 -> 0.0.2)
+#   pnpm run release minor    # Bump minor (0.0.1 -> 0.1.0)
+#   pnpm run release major    # Bump major (0.0.1 -> 1.0.0)
+#   pnpm run release current  # Release with current version in package.json
+#   pnpm run release 0.2.0    # Release with specific version
+#
+# Documentation: docs/release.md
+# ==============================================================================
 set -e
 
 BUMP_TYPE="${1:-patch}"
