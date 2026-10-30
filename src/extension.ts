@@ -27,7 +27,14 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
       const line = activeEditor.selection.active.line;
-      await toggleTaskStatus(activeEditor.document, line);
+      const success = await toggleTaskStatus(activeEditor.document, line);
+      if (success) {
+        const config = vscode.workspace.getConfiguration('checklistMarkdown');
+        const autoSave = config.get<boolean>('autoSave', true);
+        if (autoSave) {
+          await activeEditor.document.save();
+        }
+      }
     }
   );
 
