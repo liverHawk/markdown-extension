@@ -109,6 +109,54 @@ export function createMarkdownRenderer(rawMarkdown: string): InstanceType<typeof
     }
   });
 
+  // Wrap sections around headings for hierarchical sticky headings
+  md.core.ruler.push('checklist-markdown-heading-sections', (state) => {
+    const tokens = state.tokens;
+    const newTokens: InstanceType<typeof state.Token>[] = [];
+    const sectionStack: number[] = [];
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+
+      if (token.type === 'heading_open') {
+        const level = parseInt(token.tag.slice(1), 10);
+
+        // Add sticky and level classes to heading element
+        const currentHeadingClass = String(token.attrGet('class') || '');
+        token.attrSet(
+          'class',
+          (currentHeadingClass + ` sticky-heading heading-level-${level}`).trim()
+        );
+
+        // Close any sections of equal or deeper level
+        while (sectionStack.length > 0 && sectionStack[sectionStack.length - 1] >= level) {
+          const poppedLevel = sectionStack.pop();
+          const closeToken = new state.Token('html_block', '', 0);
+          closeToken.content = `</section><!-- end heading-section-h${poppedLevel} -->\n`;
+          newTokens.push(closeToken);
+        }
+
+        // Open new section
+        const openToken = new state.Token('html_block', '', 0);
+        openToken.content = `<section class="markdown-section heading-section-h${level}">\n`;
+        newTokens.push(openToken);
+        sectionStack.push(level);
+      }
+
+      newTokens.push(token);
+    }
+
+    // Close remaining open sections at EOF
+    while (sectionStack.length > 0) {
+      const poppedLevel = sectionStack.pop();
+      const closeToken = new state.Token('html_block', '', 0);
+      closeToken.content = `</section><!-- end heading-section-h${poppedLevel} -->\n`;
+      newTokens.push(closeToken);
+    }
+
+    state.tokens = newTokens;
+  });
+
   return md;
 }
 

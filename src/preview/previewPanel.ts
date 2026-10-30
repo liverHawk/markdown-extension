@@ -314,6 +314,33 @@ export class ChecklistPreviewPanel {
         }
       }
 
+      // Calculate dynamic top offset for Level 3 sticky headings based on Level 2 heading height
+      function updateStickyHeadingOffsets() {
+        const h2Sections = document.querySelectorAll('.heading-section-h2');
+        let globalH2Height = 0;
+
+        h2Sections.forEach((section) => {
+          const h2 = section.querySelector(':scope > h2');
+          if (h2) {
+            const height = h2.offsetHeight;
+            if (height > 0) {
+              section.style.setProperty('--sticky-top-h3', height + 'px');
+              if (globalH2Height === 0) {
+                globalH2Height = height;
+              }
+            }
+          }
+        });
+
+        if (globalH2Height > 0) {
+          document.documentElement.style.setProperty('--sticky-top-h3', globalH2Height + 'px');
+        }
+      }
+
+      // Initialize sticky heading offsets
+      window.requestAnimationFrame(updateStickyHeadingOffsets);
+      window.addEventListener('resize', updateStickyHeadingOffsets);
+
       // Handle hot reload content updates
       window.addEventListener('message', (event) => {
         const message = event.data;
@@ -323,6 +350,7 @@ export class ChecklistPreviewPanel {
           const markdownBody = document.getElementById('markdown-body');
           if (markdownBody && typeof message.content === 'string') {
             markdownBody.innerHTML = message.content;
+            window.requestAnimationFrame(updateStickyHeadingOffsets);
           }
           if (message.stats) {
             updateProgress(message.stats);

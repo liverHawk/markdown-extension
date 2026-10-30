@@ -95,16 +95,15 @@ body {
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Markdown sections for hierarchical sticky headings */
+.markdown-section {
+  position: relative;
+}
+
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background-color: var(--gh-bg);
   margin-top: 0;
   margin-bottom: 16px;
-  padding-top: 16px;
-  padding-bottom: 8px;
   font-weight: 600;
   line-height: 1.25;
   color: var(--gh-fg);
@@ -112,15 +111,37 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 2em;
+  padding-top: 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--gh-border-muted);
 }
 
-h2 {
+/* Level 2 sticky heading: sticks to top (0px) */
+h2,
+h2.sticky-heading {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--gh-bg);
+  padding-top: 16px;
+  padding-bottom: 8px;
   font-size: 1.5em;
   border-bottom: 1px solid var(--gh-border-muted);
 }
 
-h3 { font-size: 1.25em; }
+/* Level 3 sticky heading: sticks directly below level 2 heading */
+h3,
+h3.sticky-heading {
+  position: sticky;
+  top: var(--sticky-top-h3, 49px);
+  z-index: 10;
+  background-color: var(--gh-bg);
+  padding-top: 12px;
+  padding-bottom: 8px;
+  font-size: 1.25em;
+  border-bottom: 1px dashed var(--gh-border-muted);
+}
+
 h4 { font-size: 1em; }
 h5 { font-size: 0.875em; }
 h6 { font-size: 0.85em; color: var(--gh-muted-fg); }

@@ -15,6 +15,31 @@ suite('Styles Test Suite', () => {
     assert.ok(css.includes('z-index: 10;'), 'Headings should have z-index: 10');
   });
 
+  test('Contains hierarchical sticky heading styles for level 2 and level 3', () => {
+    const css = getStyles();
+
+    // Level 2 should stick to top (0px) with z-index: 20
+    assert.ok(
+      css.includes('h2.sticky-heading') || css.includes('h2,'),
+      'CSS should define h2 sticky heading'
+    );
+    assert.ok(css.includes('z-index: 20;'), 'H2 should have higher z-index (20)');
+
+    // Level 3 should stick below level 2 using --sticky-top-h3 variable
+    assert.ok(
+      css.includes('h3.sticky-heading') || css.includes('h3,'),
+      'CSS should define h3 sticky heading'
+    );
+    assert.ok(
+      css.includes('--sticky-top-h3'),
+      'H3 should reference --sticky-top-h3 offset variable'
+    );
+    assert.ok(
+      css.includes('.markdown-section'),
+      'CSS should define .markdown-section relative positioning'
+    );
+  });
+
   test('Contains base GitHub theme variables', () => {
     const css = getStyles();
 
