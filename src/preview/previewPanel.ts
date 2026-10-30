@@ -70,7 +70,14 @@ export class ChecklistPreviewPanel {
             const line =
               typeof message.line === 'number' ? message.line : parseInt(message.line, 10);
             const checked = Boolean(message.checked);
-            await toggleTaskStatus(this._document, line, checked);
+            const success = await toggleTaskStatus(this._document, line, checked);
+            if (success) {
+              const config = vscode.workspace.getConfiguration('checklistMarkdown');
+              const autoSave = config.get<boolean>('autoSave', true);
+              if (autoSave) {
+                await this._document.save();
+              }
+            }
             break;
           }
           case 'revealLine': {

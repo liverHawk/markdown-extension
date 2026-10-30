@@ -47,6 +47,16 @@
     "serialize-javascript": "^7.0.6"
   },
   "contributes": {
+    "configuration": {
+      "title": "Checklist Markdown",
+      "properties": {
+        "checklistMarkdown.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save the Markdown document when a task checkbox status is changed."
+        }
+      }
+    },
     "commands": [
       {
         "command": "checklist-markdown.openPreview",
