@@ -97,8 +97,14 @@ body {
 
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
-  margin-top: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--gh-bg);
+  margin-top: 0;
   margin-bottom: 16px;
+  padding-top: 16px;
+  padding-bottom: 8px;
   font-weight: 600;
   line-height: 1.25;
   color: var(--gh-fg);
@@ -106,13 +112,11 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: 2em;
-  padding-bottom: 0.3em;
   border-bottom: 1px solid var(--gh-border-muted);
 }
 
 h2 {
   font-size: 1.5em;
-  padding-bottom: 0.3em;
   border-bottom: 1px solid var(--gh-border-muted);
 }
 
