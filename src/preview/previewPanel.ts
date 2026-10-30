@@ -12,6 +12,7 @@ export class ChecklistPreviewPanel {
   private _document: vscode.TextDocument;
   private _disposables: vscode.Disposable[] = [];
   private _updateTimeout: NodeJS.Timeout | undefined;
+  private _isInitialHtmlLoaded = false;
 
   public static createOrShow(extensionUri: vscode.Uri, document: vscode.TextDocument) {
     const column = vscode.window.activeTextEditor
@@ -59,6 +60,17 @@ export class ChecklistPreviewPanel {
     // Initial render
     this._update();
 
+    // Listen to panel visibility changes
+    this._panel.onDidChangeViewState(
+      () => {
+        if (this._panel.visible) {
+          this._scheduleUpdate();
+        }
+      },
+      null,
+      this._disposables
+    );
+
     // Listen to panel disposal
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
@@ -94,8 +106,12 @@ export class ChecklistPreviewPanel {
   }
 
   public changeDocument(document: vscode.TextDocument) {
+    const isDifferentDocument = this._document.uri.toString() !== document.uri.toString();
     this._document = document;
     this._panel.title = `Preview ${getFileName(document.uri)}`;
+    if (isDifferentDocument) {
+      this._isInitialHtmlLoaded = false;
+    }
     this._scheduleUpdate();
   }
 
@@ -122,7 +138,22 @@ export class ChecklistPreviewPanel {
     if (!this._panel.visible) {
       return;
     }
-    this._panel.webview.html = this._getHtmlForWebview();
+
+    if (!this._isInitialHtmlLoaded) {
+      this._panel.webview.html = this._getHtmlForWebview();
+      this._isInitialHtmlLoaded = true;
+      return;
+    }
+
+    const rawMarkdown = this._document.getText();
+    const renderedContent = renderMarkdown(rawMarkdown);
+    const stats = this._calculateTaskStats();
+
+    this._panel.webview.postMessage({
+      command: 'updateContent',
+      content: renderedContent,
+      stats: stats,
+    });
   }
 
   private _calculateTaskStats(): { total: number; completed: number; percentage: number } {
@@ -235,6 +266,59 @@ export class ChecklistPreviewPanel {
               command: 'revealLine',
               line: line
             });
+          }
+        }
+      });
+
+      function updateProgress(stats) {
+        if (!stats) return;
+        let header = document.querySelector('.checklist-header');
+        if (stats.total > 0) {
+          if (!header) {
+            header = document.createElement('div');
+            header.className = 'checklist-header';
+            header.setAttribute('role', 'region');
+            header.setAttribute('aria-label', 'Todo list summary');
+            header.innerHTML =
+              '<div class="checklist-header-info">' +
+                '<span></span>' +
+                '<span></span>' +
+              '</div>' +
+              '<div class="checklist-progress-bar-container">' +
+                '<div class="checklist-progress-bar-fill"></div>' +
+              '</div>';
+            const markdownBody = document.getElementById('markdown-body');
+            document.body.insertBefore(header, markdownBody);
+          } else {
+            header.style.display = '';
+          }
+
+          const spans = header.querySelectorAll('.checklist-header-info span');
+          if (spans.length >= 2) {
+            spans[0].textContent = stats.completed + ' of ' + stats.total + ' tasks completed';
+            spans[1].textContent = stats.percentage + '%';
+          }
+          const fill = header.querySelector('.checklist-progress-bar-fill');
+          if (fill) {
+            fill.style.width = stats.percentage + '%';
+          }
+        } else if (header) {
+          header.style.display = 'none';
+        }
+      }
+
+      // Handle hot reload content updates
+      window.addEventListener('message', (event) => {
+        const message = event.data;
+        if (!message) return;
+
+        if (message.command === 'updateContent') {
+          const markdownBody = document.getElementById('markdown-body');
+          if (markdownBody && typeof message.content === 'string') {
+            markdownBody.innerHTML = message.content;
+          }
+          if (message.stats) {
+            updateProgress(message.stats);
           }
         }
       });
