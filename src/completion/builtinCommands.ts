@@ -279,9 +279,17 @@ export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
   },
   {
     command: 'usepackage',
-    snippet: 'usepackage{${1:package}}',
-    detail: 'Include LaTeX package',
+    snippet: 'usepackage{$1}',
+    detail: 'Include LaTeX package \\usepackage{pkg}',
     latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'RequirePackage',
+    snippet: 'RequirePackage{$1}',
+    detail: 'Require LaTeX package \\RequirePackage{pkg}',
+    latexOnly: true,
+    triggerSuggest: true,
   },
   {
     command: 'section',

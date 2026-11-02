@@ -33,9 +33,10 @@ MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチ
 8. **エディタショートカットキー**
    - エディタ上でタスク行にカーソルを置き、`Alt + X` を押すだけでチェック状態（`[ ]` ↔ `[x]`）をトグルできます。
 
-9. **LaTeX コマンド & BibTeX 引用タグの入力候補（オートコンプリート）**
+9. **LaTeX コマンド・パッケージ・BibTeX 引用タグの入力候補（オートコンプリート）**
    - LaTeXファイル（`.tex`）およびMarkdownファイルの数式内（`$...$` / `$$...$$`）で、`\` を入力すると頻出LaTeXコマンドの入力候補が表示されます。
    - スニペット形式（例: `\frac{num}{den}` や `\begin{aligned} ... \end{aligned}`）に対応しており、`Tab` キーで引数間をスムーズに移動できます。
+   - `\usepackage{...}`（および `\RequirePackage{...}`）内で、ワークスペースのルートや開いている `.tex` ファイルと同じディレクトリにある `.sty` ファイル（`\ProvidesPackage` の説明文も自動取得）と、定番の標準パッケージ（`amsmath`, `graphicx`, `hyperref`, `tikz` 等）を候補として表示します。
    - ファイル内の `\bibliography{...}` や `\addbibresource{...}` で指定された `.bib` ファイルを自動解析し、`\cite{}` / `\citep{}` / `\citet{}` / `\parencite{}` / `\textcite{}` / `\autocite{}` 等の中で引用キー（および論文タイトル・著者名・発行年）を候補として表示します（`\cite{key1, key2}` のようなカンマ区切り複数指定にも対応）。
    - VS Code の `settings.json` から独自のカスタムLaTeXコマンドをキーバリュー形式で自由に追加・上書きできます。
 
