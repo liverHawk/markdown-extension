@@ -9,6 +9,8 @@ export interface LatexCommandDefinition {
   documentation?: string;
   /** If true, only suggest in LaTeX documents (.tex), not inside Markdown math blocks */
   latexOnly?: boolean;
+  /** If true, automatically re-trigger suggest inside the snippet placeholder */
+  triggerSuggest?: boolean;
 }
 
 export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
@@ -310,8 +312,77 @@ export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
   { command: 'eqref', snippet: 'eqref{${1:key}}', detail: 'Reference to an equation' },
   {
     command: 'cite',
-    snippet: 'cite{${1:key}}',
-    detail: 'Bibliographic citation',
+    snippet: 'cite{$1}',
+    detail: 'Bibliographic citation \\cite{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'citep',
+    snippet: 'citep{$1}',
+    detail: 'Parenthetical citation \\citep{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'citet',
+    snippet: 'citet{$1}',
+    detail: 'Textual citation \\citet{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'parencite',
+    snippet: 'parencite{$1}',
+    detail: 'Parenthetical citation (biblatex) \\parencite{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'textcite',
+    snippet: 'textcite{$1}',
+    detail: 'Textual citation (biblatex) \\textcite{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'autocite',
+    snippet: 'autocite{$1}',
+    detail: 'Automatic citation (biblatex) \\autocite{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'citeauthor',
+    snippet: 'citeauthor{$1}',
+    detail: 'Cite author name \\citeauthor{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'citeyear',
+    snippet: 'citeyear{$1}',
+    detail: 'Cite publication year \\citeyear{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'nocite',
+    snippet: 'nocite{$1}',
+    detail: 'Include in bibliography without inline citation \\nocite{key}',
+    latexOnly: true,
+    triggerSuggest: true,
+  },
+  {
+    command: 'bibliography',
+    snippet: 'bibliography{${1:refs}}',
+    detail: 'BibTeX bibliography file(s)',
+    latexOnly: true,
+  },
+  {
+    command: 'addbibresource',
+    snippet: 'addbibresource{${1:refs.bib}}',
+    detail: 'BibLaTeX bibliography resource file',
     latexOnly: true,
   },
   { command: 'item', snippet: 'item ', detail: 'List item', latexOnly: true },
