@@ -104,7 +104,7 @@ export function extractCitationContext(linePrefix: string): CitationContext | un
   };
 }
 
-function findUnescapedCommentIndex(line: string): number {
+export function findUnescapedCommentIndex(line: string): number {
   for (let i = 0; i < line.length; i++) {
     if (line[i] === '\\') {
       i++; // skip escaped character
@@ -120,7 +120,7 @@ function findUnescapedCommentIndex(line: string): number {
 /**
  * Strips unescaped LaTeX comments (`% ...`) from each line of text.
  */
-function stripLatexComments(text: string): string {
+export function stripLatexComments(text: string): string {
   return text
     .split(/\r?\n/)
     .map((line) => {

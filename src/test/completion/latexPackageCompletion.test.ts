@@ -51,8 +51,10 @@ suite('LaTeX Package (\\usepackage) Completion Test Suite', () => {
       fs.writeFileSync(
         styPath1,
         [
+          '% \\ProvidesPackage{mycustomstyle}[IGNORE THIS COMMENTED HEADER]',
           '\\NeedsTeXFormat{LaTeX2e}',
-          '\\ProvidesPackage{mycustomstyle}[2026/11/02 v1.0 Custom Conference Macros]',
+          '\\ProvidesPackage{mycustomstyle}%',
+          '  [2026/11/02 v1.0 Custom Conference Macros]',
           '\\RequirePackage{amsmath}',
         ].join('\n'),
         'utf8'

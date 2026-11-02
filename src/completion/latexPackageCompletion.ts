@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { findUnescapedCommentIndex, stripLatexComments } from './bibtexCitation.js';
 
 export interface LatexPackageEntry {
   /** Package name without `.sty` extension (e.g. "mycustom", "amsmath") */
@@ -141,19 +142,6 @@ export const BUILTIN_LATEX_PACKAGES: readonly LatexPackageEntry[] = [
 
 const USEPACKAGE_PREFIX_REGEX = /\\(usepackage|RequirePackage)(?:\[[^\]]*\])?\{([^{}]*)$/;
 
-function findUnescapedCommentIndex(line: string): number {
-  for (let i = 0; i < line.length; i++) {
-    if (line[i] === '\\') {
-      i++;
-      continue;
-    }
-    if (line[i] === '%') {
-      return i;
-    }
-  }
-  return -1;
-}
-
 /**
  * Detects whether the cursor is currently inside the braces `{...}` of `\usepackage{...}`
  * or `\RequirePackage{...}`.
@@ -243,7 +231,8 @@ function parseStyFileMetadata(styFilePath: string): LatexPackageEntry {
       fs.closeSync(fd);
     }
 
-    const providesMatch = /\\ProvidesPackage\s*\{[^{}]*\}\s*\[([^\]]+)\]/.exec(headText);
+    const uncommentedHead = stripLatexComments(headText);
+    const providesMatch = /\\ProvidesPackage\s*\{[^{}]*\}\s*\[([^\]]+)\]/.exec(uncommentedHead);
     const description = providesMatch ? providesMatch[1].replace(/\s+/g, ' ').trim() : undefined;
     const detail = description
       ? `Local style (${fileName}) — ${description}`
@@ -269,7 +258,7 @@ function parseStyFileMetadata(styFilePath: string): LatexPackageEntry {
 }
 
 /**
- * Discovers `.sty` files in the workspace root directory (and the current document's directory)
+ * Discovers `.sty` files in the current document's directory and the workspace root directory,
  * and merges them with built-in common LaTeX packages.
  */
 export function resolveLatexPackages(
@@ -279,20 +268,20 @@ export function resolveLatexPackages(
 ): LatexPackageEntry[] {
   const packageMap = new Map<string, LatexPackageEntry>();
 
-  // Collect unique directories to inspect: workspace root(s) + current document directory
+  // Collect unique directories to inspect: current document directory first (matching LaTeX search order), then workspace root(s)
   const searchDirs: string[] = [];
   const seenDirs = new Set<string>();
 
-  for (const wsDir of workspaceDirs) {
-    const resolved = path.resolve(wsDir);
+  if (documentDir) {
+    const resolved = path.resolve(documentDir);
     if (!seenDirs.has(resolved)) {
       seenDirs.add(resolved);
       searchDirs.push(resolved);
     }
   }
 
-  if (documentDir) {
-    const resolved = path.resolve(documentDir);
+  for (const wsDir of workspaceDirs) {
+    const resolved = path.resolve(wsDir);
     if (!seenDirs.has(resolved)) {
       seenDirs.add(resolved);
       searchDirs.push(resolved);
