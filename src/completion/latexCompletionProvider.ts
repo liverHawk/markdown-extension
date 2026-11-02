@@ -1,4 +1,10 @@
+import * as path from 'path';
 import * as vscode from 'vscode';
+import {
+  BibtexEntry,
+  extractCitationContext,
+  loadBibtexEntriesForDocument,
+} from './bibtexCitation.js';
 import { BUILTIN_LATEX_COMMANDS, LatexCommandDefinition } from './builtinCommands.js';
 import { isInsideMathContext } from './mathContext.js';
 
@@ -76,6 +82,51 @@ export function extractCommandPrefix(
   };
 }
 
+export function createBibtexCompletionItem(
+  entry: BibtexEntry,
+  replacementRange: vscode.Range
+): vscode.CompletionItem {
+  const item = new vscode.CompletionItem(entry.key, vscode.CompletionItemKind.Reference);
+  item.insertText = entry.key;
+  item.range = replacementRange;
+
+  const detailParts: string[] = [];
+  if (entry.author) {
+    detailParts.push(entry.author);
+  }
+  if (entry.year) {
+    detailParts.push(`(${entry.year})`);
+  }
+  if (entry.title) {
+    detailParts.push(detailParts.length > 0 ? `- ${entry.title}` : entry.title);
+  }
+  item.detail = detailParts.length > 0 ? detailParts.join(' ') : `@${entry.entryType}`;
+
+  const filterTokens = [entry.key, entry.title, entry.author, entry.year].filter(Boolean);
+  item.filterText = filterTokens.join(' ');
+
+  const docLines: string[] = [];
+  if (entry.title) {
+    docLines.push(`**${entry.title}**`);
+  }
+  if (entry.author) {
+    docLines.push(`- **Author:** ${entry.author}`);
+  }
+  if (entry.year) {
+    docLines.push(`- **Year:** ${entry.year}`);
+  }
+  if (entry.venue) {
+    docLines.push(`- **Venue:** ${entry.venue}`);
+  }
+  const sourceInfo = entry.sourceFile
+    ? `\`@${entry.entryType}\` (${entry.sourceFile})`
+    : `\`@${entry.entryType}\``;
+  docLines.push(`- **Type:** ${sourceInfo}`);
+
+  item.documentation = new vscode.MarkdownString(docLines.join('\n'));
+  return item;
+}
+
 export class LatexCompletionProvider implements vscode.CompletionItemProvider {
   public provideCompletionItems(
     document: vscode.TextDocument,
@@ -90,6 +141,56 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
     // Fast path: check current line prefix before scanning full document text
     const lineText = document.lineAt(position.line).text;
     const linePrefix = lineText.slice(0, position.character);
+
+    // 1. Check if cursor is inside a citation command like \cite{...}
+    const citationContext = extractCitationContext(linePrefix);
+    if (citationContext) {
+      const documentDir =
+        document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
+      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+      const entries = loadBibtexEntriesForDocument(document.getText(), documentDir, workspaceDirs);
+
+      const existingSet = new Set(citationContext.existingKeys);
+      const replacementRange = new vscode.Range(
+        position.line,
+        citationContext.startCharacter,
+        position.line,
+        position.character
+      );
+
+      return entries
+        .filter((entry) => !existingSet.has(entry.key))
+        .map((entry) => createBibtexCompletionItem(entry, replacementRange));
+    }
+
+    // 2. Otherwise check if cursor is typing a LaTeX backslash command
+
+    // 1. Check if cursor is inside a citation command like \cite{...}
+    const citationContext = extractCitationContext(linePrefix);
+    if (citationContext) {
+      const documentDir =
+        document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
+      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+      const entries = loadBibtexEntriesForDocument(
+        document.getText(),
+        documentDir,
+        workspaceDirs
+      );
+
+      const existingSet = new Set(citationContext.existingKeys);
+      const replacementRange = new vscode.Range(
+        position.line,
+        citationContext.startCharacter,
+        position.line,
+        position.character
+      );
+
+      return entries
+        .filter((entry) => !existingSet.has(entry.key))
+        .map((entry) => createBibtexCompletionItem(entry, replacementRange));
+    }
+
+    // 2. Otherwise check if cursor is typing a LaTeX backslash command
     const commandPrefix = extractCommandPrefix(linePrefix);
     if (!commandPrefix) {
       return undefined;
@@ -131,6 +232,12 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
       item.detail = def.detail;
       if (def.documentation) {
         item.documentation = new vscode.MarkdownString(def.documentation);
+      }
+      if (def.triggerSuggest) {
+        item.command = {
+          command: 'editor.action.triggerSuggest',
+          title: 'Trigger Suggest',
+        };
       }
       return item;
     });

@@ -9,7 +9,9 @@ export function activate(context: vscode.ExtensionContext) {
     [{ language: 'latex' }, { language: 'tex' }, { language: 'doctex' }, { language: 'markdown' }],
     new LatexCompletionProvider(),
     '\\',
-    '{'
+    '{',
+    ',',
+    ' '
   );
 
   // Command: Open Interactive Preview
