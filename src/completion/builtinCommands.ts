@@ -7,6 +7,8 @@ export interface LatexCommandDefinition {
   detail: string;
   /** Category or documentation */
   documentation?: string;
+  /** If true, only suggest in LaTeX documents (.tex), not inside Markdown math blocks */
+  latexOnly?: boolean;
 }
 
 export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
@@ -243,23 +245,27 @@ export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
     command: 'begin{itemize}',
     snippet: 'begin{itemize}\n\t\\item $0\n\\end{itemize}',
     detail: 'Bulleted list environment',
+    latexOnly: true,
   },
   {
     command: 'begin{enumerate}',
     snippet: 'begin{enumerate}\n\t\\item $0\n\\end{enumerate}',
     detail: 'Numbered list environment',
+    latexOnly: true,
   },
   {
     command: 'begin{figure}',
     snippet:
       'begin{figure}[${1:htbp}]\n\t\\centering\n\t\\includegraphics[width=${2:0.8}\\textwidth]{${3:file}}\n\t\\caption{${4:caption}}\n\t\\label{fig:${5:label}}\n\\end{figure}',
     detail: 'Figure environment',
+    latexOnly: true,
   },
   {
     command: 'begin{table}',
     snippet:
       'begin{table}[${1:htbp}]\n\t\\centering\n\t\\caption{${2:caption}}\n\t\\label{tab:${3:label}}\n\t\\begin{tabular}{${4:c c}}\n\t\t$0\n\t\\end{tabular}\n\\end{table}',
     detail: 'Table environment',
+    latexOnly: true,
   },
 
   // Document Structure & Citations (LaTeX files)
@@ -267,29 +273,51 @@ export const BUILTIN_LATEX_COMMANDS: readonly LatexCommandDefinition[] = [
     command: 'documentclass',
     snippet: 'documentclass[${1:options}]{${2:article}}',
     detail: 'Document class declaration',
+    latexOnly: true,
   },
   {
     command: 'usepackage',
     snippet: 'usepackage{${1:package}}',
     detail: 'Include LaTeX package',
+    latexOnly: true,
   },
-  { command: 'section', snippet: 'section{${1:title}}', detail: 'Section heading' },
-  { command: 'subsection', snippet: 'subsection{${1:title}}', detail: 'Subsection heading' },
+  {
+    command: 'section',
+    snippet: 'section{${1:title}}',
+    detail: 'Section heading',
+    latexOnly: true,
+  },
+  {
+    command: 'subsection',
+    snippet: 'subsection{${1:title}}',
+    detail: 'Subsection heading',
+    latexOnly: true,
+  },
   {
     command: 'subsubsection',
     snippet: 'subsubsection{${1:title}}',
     detail: 'Subsubsection heading',
+    latexOnly: true,
   },
-  { command: 'paragraph', snippet: 'paragraph{${1:title}}', detail: 'Paragraph heading' },
+  {
+    command: 'paragraph',
+    snippet: 'paragraph{${1:title}}',
+    detail: 'Paragraph heading',
+    latexOnly: true,
+  },
   { command: 'label', snippet: 'label{${1:key}}', detail: 'Label for cross-referencing' },
   { command: 'ref', snippet: 'ref{${1:key}}', detail: 'Reference to a label' },
   { command: 'eqref', snippet: 'eqref{${1:key}}', detail: 'Reference to an equation' },
-  { command: 'cite', snippet: 'cite{${1:key}}', detail: 'Bibliographic citation' },
-  { command: 'item', snippet: 'item ', detail: 'List item' },
+  {
+    command: 'cite',
+    snippet: 'cite{${1:key}}',
+    detail: 'Bibliographic citation',
+    latexOnly: true,
+  },
+  { command: 'item', snippet: 'item ', detail: 'List item', latexOnly: true },
   {
     command: 'newcommand',
     snippet: 'newcommand{\\${1:cmd}}[${2:1}]{${3:definition}}',
     detail: 'Define a new macro command',
   },
 ];
-

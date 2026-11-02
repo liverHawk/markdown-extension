@@ -2,18 +2,27 @@ import * as vscode from 'vscode';
 import { BUILTIN_LATEX_COMMANDS, LatexCommandDefinition } from './builtinCommands.js';
 import { isInsideMathContext } from './mathContext.js';
 
+export interface ResolveLatexCommandsOptions {
+  isMarkdown?: boolean;
+}
+
 /**
  * Merges built-in LaTeX commands with user-defined custom commands from settings.
  * Custom commands override built-in commands with the same command name.
  */
 export function resolveLatexCommands(
   includeBuiltin: boolean,
-  customCommands: Record<string, string> | undefined
+  customCommands: Record<string, string> | undefined,
+  options?: ResolveLatexCommandsOptions
 ): LatexCommandDefinition[] {
   const commandMap = new Map<string, LatexCommandDefinition>();
+  const isMarkdown = options?.isMarkdown ?? false;
 
   if (includeBuiltin) {
     for (const cmd of BUILTIN_LATEX_COMMANDS) {
+      if (isMarkdown && cmd.latexOnly) {
+        continue;
+      }
       commandMap.set(cmd.command, cmd);
     }
   }
@@ -45,7 +54,8 @@ export function resolveLatexCommands(
 
 /**
  * Extracts the active LaTeX command prefix starting with `\` right before the cursor.
- * Returns undefined if the cursor is not currently typing a backslash command.
+ * Returns undefined if the cursor is not currently typing a backslash command
+ * or if the user just typed a line-break `\\` without any command characters.
  */
 export function extractCommandPrefix(
   linePrefix: string
@@ -54,6 +64,12 @@ export function extractCommandPrefix(
   if (!match) {
     return undefined;
   }
+
+  // Avoid triggering completion popup right after typing `\\` (LaTeX line break)
+  if (match[1].length === 0 && match.index > 0 && linePrefix[match.index - 1] === '\\') {
+    return undefined;
+  }
+
   return {
     prefix: match[0],
     startCharacter: match.index,
@@ -71,15 +87,7 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
       return undefined;
     }
 
-    // For Markdown documents, only provide completions inside math contexts ($...$ or $$...$$)
-    if (document.languageId === 'markdown') {
-      const fullText = document.getText();
-      const offset = document.offsetAt(position);
-      if (!isInsideMathContext(fullText, offset)) {
-        return undefined;
-      }
-    }
-
+    // Fast path: check current line prefix before scanning full document text
     const lineText = document.lineAt(position.line).text;
     const linePrefix = lineText.slice(0, position.character);
     const commandPrefix = extractCommandPrefix(linePrefix);
@@ -87,9 +95,20 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
       return undefined;
     }
 
+    const isMarkdown = document.languageId === 'markdown';
+
+    // For Markdown documents, only provide completions inside math contexts ($...$ or $$...$$)
+    if (isMarkdown) {
+      const fullText = document.getText();
+      const offset = document.offsetAt(position);
+      if (!isInsideMathContext(fullText, offset)) {
+        return undefined;
+      }
+    }
+
     const includeBuiltin = config.get<boolean>('includeBuiltinCommands', true);
     const customCommands = config.get<Record<string, string>>('customCommands', {});
-    const definitions = resolveLatexCommands(includeBuiltin, customCommands);
+    const definitions = resolveLatexCommands(includeBuiltin, customCommands, { isMarkdown });
 
     const replacementRange = new vscode.Range(
       position.line,

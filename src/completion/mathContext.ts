@@ -100,4 +100,3 @@ export function isInsideMathContext(text: string, offset: number): boolean {
 
   return inBlockMath || inInlineMath;
 }
-

@@ -49,4 +49,3 @@ suite('Math Context Test Suite', () => {
     assert.strictEqual(isInsideMathContext(fencedCode, offsetFenced), false);
   });
 });
-

@@ -22,6 +22,13 @@ suite('LaTeX Completion Provider Test Suite', () => {
     });
     assert.strictEqual(extractCommandPrefix('plain text without backslash'), undefined);
     assert.strictEqual(extractCommandPrefix('\\command with space'), undefined);
+    // Double backslash `\\` (line break) without trailing command chars should not trigger
+    assert.strictEqual(extractCommandPrefix('x + y \\\\'), undefined);
+    // Double backslash followed by command letters should match the command part
+    assert.deepStrictEqual(extractCommandPrefix('x + y \\\\fra'), {
+      prefix: '\\fra',
+      startCharacter: 7,
+    });
   });
 
   test('resolveLatexCommands includes built-in commands and merges custom commands', () => {
@@ -53,6 +60,24 @@ suite('LaTeX Completion Provider Test Suite', () => {
     });
     assert.strictEqual(commands.length, 1);
     assert.strictEqual(commands[0].command, 'customOnly');
+  });
+
+  test('resolveLatexCommands filters out latexOnly commands in Markdown mode', () => {
+    const latexCommands = resolveLatexCommands(true, {}, { isMarkdown: false });
+    const markdownCommands = resolveLatexCommands(true, {}, { isMarkdown: true });
+
+    assert.ok(
+      latexCommands.some((c) => c.command === 'documentclass'),
+      'LaTeX mode should include documentclass'
+    );
+    assert.ok(
+      !markdownCommands.some((c) => c.command === 'documentclass'),
+      'Markdown mode should exclude documentclass'
+    );
+    assert.ok(
+      markdownCommands.some((c) => c.command === 'frac'),
+      'Markdown mode should still include math commands like frac'
+    );
   });
 
   test('LatexCompletionProvider provides completions in LaTeX document and Markdown math context', async () => {
@@ -95,4 +120,3 @@ suite('LaTeX Completion Provider Test Suite', () => {
     );
   });
 });
-
