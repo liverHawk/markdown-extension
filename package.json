@@ -54,6 +54,24 @@
           "type": "boolean",
           "default": true,
           "description": "Automatically save the Markdown document when a task checkbox status is changed."
+        },
+        "checklistMarkdown.latex.enableCompletion": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks."
+        },
+        "checklistMarkdown.latex.includeBuiltinCommands": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include built-in common LaTeX commands in autocompletion."
+        },
+        "checklistMarkdown.latex.customCommands": {
+          "type": "object",
+          "default": {},
+          "description": "Custom LaTeX commands and snippets as key-value pairs (e.g. { \"mycmd\": \"mycmd{${1:x}}\" }).",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -94,7 +112,10 @@
     ]
   },
   "activationEvents": [
-    "onLanguage:markdown"
+    "onLanguage:doctex",
+    "onLanguage:latex",
+    "onLanguage:markdown",
+    "onLanguage:tex"
   ],
   "engines": {
     "vscode": "^1.90.0"

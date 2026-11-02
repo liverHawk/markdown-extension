@@ -1,8 +1,17 @@
 import * as vscode from 'vscode';
 import { ChecklistPreviewPanel } from './preview/previewPanel.js';
 import { toggleTaskStatus } from './editor/taskToggler.js';
+import { LatexCompletionProvider } from './completion/latexCompletionProvider.js';
 
 export function activate(context: vscode.ExtensionContext) {
+  // Register LaTeX Completion Provider for LaTeX and Markdown files
+  const latexCompletionProvider = vscode.languages.registerCompletionItemProvider(
+    [{ language: 'latex' }, { language: 'tex' }, { language: 'doctex' }, { language: 'markdown' }],
+    new LatexCompletionProvider(),
+    '\\',
+    '{'
+  );
+
   // Command: Open Interactive Preview
   const openPreviewCommand = vscode.commands.registerCommand(
     'checklist-markdown.openPreview',
@@ -53,6 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(
+    latexCompletionProvider,
     openPreviewCommand,
     toggleCurrentTaskCommand,
     onDidChangeTextDocument,
