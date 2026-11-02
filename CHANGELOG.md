@@ -6,6 +6,21 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-02
+
+### Added
+
+- **LaTeX Command Autocompletion**: Added snippet-based autocompletion for built-in and custom LaTeX commands in `.tex` files and Markdown math blocks (`$...$` / `$$...$$`).
+- **LaTeX Package Autocompletion (`\usepackage`)**: Added completion for local `.sty` files (with automatic `\ProvidesPackage` description extraction) and built-in standard LaTeX packages inside `\usepackage{...}` and `\RequirePackage{...}`.
+- **BibTeX Citation Key Autocompletion**: Added completion for citation keys (including paper title, author, and year metadata) from `.bib` files referenced via `\bibliography{...}` or `\addbibresource{...}` inside `\cite`, `\citep`, `\citet`, `\parencite`, `\textcite`, and `\autocite`.
+- **LaTeX Completion Settings**: Added `checklistMarkdown.latex.enableCompletion`, `checklistMarkdown.latex.includeBuiltinCommands`, and `checklistMarkdown.latex.customCommands` configuration options.
+
+## [0.1.1] - 2026-10-30
+
+### Changed
+
+- **Hierarchical Sticky Headings**: Improved sticky headings so `h1`, `h2`, and `h3` stack hierarchically with dynamic vertical offsets when scrolling.
+
 ## [0.1.0] - 2026-10-30
 
 ### Added
