@@ -164,33 +164,6 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
     }
 
     // 2. Otherwise check if cursor is typing a LaTeX backslash command
-
-    // 1. Check if cursor is inside a citation command like \cite{...}
-    const citationContext = extractCitationContext(linePrefix);
-    if (citationContext) {
-      const documentDir =
-        document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
-      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
-      const entries = loadBibtexEntriesForDocument(
-        document.getText(),
-        documentDir,
-        workspaceDirs
-      );
-
-      const existingSet = new Set(citationContext.existingKeys);
-      const replacementRange = new vscode.Range(
-        position.line,
-        citationContext.startCharacter,
-        position.line,
-        position.character
-      );
-
-      return entries
-        .filter((entry) => !existingSet.has(entry.key))
-        .map((entry) => createBibtexCompletionItem(entry, replacementRange));
-    }
-
-    // 2. Otherwise check if cursor is typing a LaTeX backslash command
     const commandPrefix = extractCommandPrefix(linePrefix);
     if (!commandPrefix) {
       return undefined;
