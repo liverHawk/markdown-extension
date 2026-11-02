@@ -38,4 +38,3 @@ jobs:
 
       - name: Verify extension bundle
         run: pnpm run package-ext
-
