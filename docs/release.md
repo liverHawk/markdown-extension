@@ -44,7 +44,7 @@ pnpm run release 0.2.0
    - `git push origin vX.Y.Z`
 4. **VSIX パッケージのビルド**:
    - `rolldown` で `markdown-it` を内包した `out/extension.js` を高速バンドル
-   - `vsce package` で `checklist-markdown-X.Y.Z.vsix` を生成
+   - `vsce package` で `paperflow-X.Y.Z.vsix` を生成
 5. **GitHub Releases への公開**:
    - `gh release create` でタグ付きリリースを作成し、生成された `.vsix` を自動添付
    - 直近のコミットログからリリースノートを自動生成
@@ -110,8 +110,8 @@ export OVSX_PAT="your-access-token"
 
 ```bash
 # VS Code Marketplace のみ公開
-pnpm exec vsce publish --packagePath checklist-markdown-X.Y.Z.vsix
+pnpm exec vsce publish --packagePath paperflow-X.Y.Z.vsix
 
 # Open VSX のみ公開
-pnpm exec ovsx publish checklist-markdown-X.Y.Z.vsix
+pnpm exec ovsx publish paperflow-X.Y.Z.vsix
 ```

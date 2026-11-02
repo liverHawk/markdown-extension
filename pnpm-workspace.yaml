@@ -1,3 +1,2 @@
 allowBuilds:
   '@vscode/vsce-sign': true
-  esbuild: set this to true or false

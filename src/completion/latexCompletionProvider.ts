@@ -156,7 +156,7 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
     document: vscode.TextDocument,
     position: vscode.Position
   ): vscode.CompletionItem[] | undefined {
-    const config = vscode.workspace.getConfiguration('checklistMarkdown.latex');
+    const config = vscode.workspace.getConfiguration('paperflow.latex');
     const enabled = config.get<boolean>('enableCompletion', true);
     if (!enabled) {
       return undefined;

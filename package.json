@@ -1,10 +1,12 @@
 {
-  "name": "checklist-markdown",
-  "displayName": "Checklist Markdown",
+  "name": "paperflow",
+  "displayName": "PaperFlow: LaTeX & Markdown Checklist",
   "version": "0.1.2",
-  "description": "switch display from md to checkbox and edit status of todo list.",
+  "description": "LaTeX completion (commands, packages, BibTeX citations) and interactive Markdown checklist preview for academic writing and task management.",
   "categories": [
-    "Other"
+    "Other",
+    "Programming Languages",
+    "Snippets"
   ],
   "license": "MIT",
   "repository": {
@@ -35,7 +37,7 @@
     "@types/vscode": "^1.90.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
-    "@vscode/vsce": "^4.0.0",
+    "@vscode/vsce": "^4.1.0",
     "ovsx": "^1.3.0",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
@@ -48,24 +50,24 @@
   },
   "contributes": {
     "configuration": {
-      "title": "Checklist Markdown",
+      "title": "PaperFlow",
       "properties": {
-        "checklistMarkdown.autoSave": {
+        "paperflow.autoSave": {
           "type": "boolean",
           "default": true,
           "description": "Automatically save the Markdown document when a task checkbox status is changed."
         },
-        "checklistMarkdown.latex.enableCompletion": {
+        "paperflow.latex.enableCompletion": {
           "type": "boolean",
           "default": true,
           "description": "Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks."
         },
-        "checklistMarkdown.latex.includeBuiltinCommands": {
+        "paperflow.latex.includeBuiltinCommands": {
           "type": "boolean",
           "default": true,
           "description": "Include built-in common LaTeX commands in autocompletion."
         },
-        "checklistMarkdown.latex.customCommands": {
+        "paperflow.latex.customCommands": {
           "type": "object",
           "default": {},
           "description": "Custom LaTeX commands and snippets as key-value pairs (e.g. { \"mycmd\": \"mycmd{${1:x}}\" }).",
@@ -77,26 +79,26 @@
     },
     "commands": [
       {
-        "command": "checklist-markdown.openPreview",
-        "title": "Checklist Markdown: Open Interactive Preview",
+        "command": "paperflow.openPreview",
+        "title": "PaperFlow: Open Interactive Preview",
         "icon": "$(checklist)"
       },
       {
-        "command": "checklist-markdown.toggleCurrentTask",
-        "title": "Checklist Markdown: Toggle Task on Current Line"
+        "command": "paperflow.toggleCurrentTask",
+        "title": "PaperFlow: Toggle Task on Current Line"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "checklist-markdown.openPreview",
+          "command": "paperflow.openPreview",
           "when": "editorLangId == markdown",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "command": "checklist-markdown.toggleCurrentTask",
+          "command": "paperflow.toggleCurrentTask",
           "when": "editorLangId == markdown",
           "group": "modification"
         }
@@ -104,7 +106,7 @@
     },
     "keybindings": [
       {
-        "command": "checklist-markdown.toggleCurrentTask",
+        "command": "paperflow.toggleCurrentTask",
         "key": "alt+x",
         "mac": "alt+x",
         "when": "editorTextFocus && editorLangId == markdown"

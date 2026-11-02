@@ -15,23 +15,20 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // Command: Open Interactive Preview
-  const openPreviewCommand = vscode.commands.registerCommand(
-    'checklist-markdown.openPreview',
-    () => {
-      const activeEditor = vscode.window.activeTextEditor;
-      if (!activeEditor || activeEditor.document.languageId !== 'markdown') {
-        vscode.window.showInformationMessage(
-          'Please open a Markdown file to view the checklist preview.'
-        );
-        return;
-      }
-      ChecklistPreviewPanel.createOrShow(context.extensionUri, activeEditor.document);
+  const openPreviewCommand = vscode.commands.registerCommand('paperflow.openPreview', () => {
+    const activeEditor = vscode.window.activeTextEditor;
+    if (!activeEditor || activeEditor.document.languageId !== 'markdown') {
+      vscode.window.showInformationMessage(
+        'Please open a Markdown file to view the checklist preview.'
+      );
+      return;
     }
-  );
+    ChecklistPreviewPanel.createOrShow(context.extensionUri, activeEditor.document);
+  });
 
   // Command: Toggle task on current cursor line in editor
   const toggleCurrentTaskCommand = vscode.commands.registerCommand(
-    'checklist-markdown.toggleCurrentTask',
+    'paperflow.toggleCurrentTask',
     async () => {
       const activeEditor = vscode.window.activeTextEditor;
       if (!activeEditor || activeEditor.document.languageId !== 'markdown') {
@@ -40,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
       const line = activeEditor.selection.active.line;
       const success = await toggleTaskStatus(activeEditor.document, line);
       if (success) {
-        const config = vscode.workspace.getConfiguration('checklistMarkdown');
+        const config = vscode.workspace.getConfiguration('paperflow');
         const autoSave = config.get<boolean>('autoSave', true);
         if (autoSave) {
           await activeEditor.document.save();

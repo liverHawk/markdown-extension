@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Release Automation Script for checklist-markdown
+# Release Automation Script for paperflow
 # 
 # Usage:
 #   pnpm run release patch    # Bump patch (0.0.1 -> 0.0.2)
@@ -47,7 +47,7 @@ else
   TAG="v$VERSION"
 fi
 
-VSIX="checklist-markdown-$VERSION.vsix"
+VSIX="paperflow-$VERSION.vsix"
 echo "==> Target release: $TAG ($VSIX)"
 
 # 4. リモートへコミットとタグを push

@@ -5,7 +5,7 @@ import { toggleTaskStatus, TASK_REGEX } from '../editor/taskToggler.js';
 
 export class ChecklistPreviewPanel {
   public static currentPanel: ChecklistPreviewPanel | undefined;
-  public static readonly viewType = 'checklistMarkdownPreview';
+  public static readonly viewType = 'paperflowPreview';
 
   private readonly _panel: vscode.WebviewPanel;
   private readonly _extensionUri: vscode.Uri;
@@ -84,7 +84,7 @@ export class ChecklistPreviewPanel {
             const checked = Boolean(message.checked);
             const success = await toggleTaskStatus(this._document, line, checked);
             if (success) {
-              const config = vscode.workspace.getConfiguration('checklistMarkdown');
+              const config = vscode.workspace.getConfiguration('paperflow');
               const autoSave = config.get<boolean>('autoSave', true);
               if (autoSave) {
                 await this._document.save();
@@ -211,7 +211,7 @@ export class ChecklistPreviewPanel {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data: vscode-resource:; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
-  <title>Checklist Markdown Preview</title>
+  <title>PaperFlow Checklist Preview</title>
   <style>
     ${styles}
   </style>

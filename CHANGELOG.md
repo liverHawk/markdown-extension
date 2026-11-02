@@ -1,10 +1,18 @@
 # Change Log
 
-All notable changes to the "checklist-markdown" extension will be documented in this file.
+All notable changes to the "paperflow" extension will be documented in this file.
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-11-02
+
+### Changed
+
+- **Rebranded Extension to PaperFlow**: Renamed extension ID from `checklist-markdown` to `paperflow` and display name to `PaperFlow: LaTeX & Markdown Checklist` to reflect its integrated academic writing and task management workflow.
+- **Updated Commands**: Renamed commands to `paperflow.openPreview` (`PaperFlow: Open Interactive Preview`) and `paperflow.toggleCurrentTask` (`PaperFlow: Toggle Task on Current Line`).
+- **Updated Configuration Keys**: Changed configuration prefix from `checklistMarkdown.*` to `paperflow.*` (`paperflow.autoSave`, `paperflow.latex.enableCompletion`, `paperflow.latex.includeBuiltinCommands`, and `paperflow.latex.customCommands`).
 
 ## [0.1.2] - 2026-11-02
 
