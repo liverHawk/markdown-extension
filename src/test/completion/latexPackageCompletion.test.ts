@@ -135,4 +135,3 @@ suite('LaTeX Package (\\usepackage) Completion Test Suite', () => {
     }
   });
 });
-
