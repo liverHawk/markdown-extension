@@ -183,6 +183,15 @@ export function parseBibtex(content: string, sourceFile?: string): BibtexEntry[]
   let match: RegExpExecArray | null;
 
   while ((match = entryHeaderRegex.exec(content)) !== null) {
+    // Check if the `@` is preceded by an unescaped `%` comment on the same line
+    const lineStart = content.lastIndexOf('\n', match.index - 1) + 1;
+    const prefixOnLine = content.slice(lineStart, match.index);
+    if (findUnescapedCommentIndex(prefixOnLine) !== -1) {
+      const lineEnd = content.indexOf('\n', match.index);
+      entryHeaderRegex.lastIndex = lineEnd === -1 ? content.length : lineEnd + 1;
+      continue;
+    }
+
     const entryType = match[1].toLowerCase();
     const openDelimiter = match[2];
     const closeDelimiter = openDelimiter === '{' ? '}' : ')';
@@ -403,9 +412,18 @@ function parseBibtexFields(fieldsText: string): Map<string, string> {
   return fields;
 }
 
+interface CachedBibFile {
+  mtimeMs: number;
+  size: number;
+  entries: BibtexEntry[];
+}
+
+const bibFileCache = new Map<string, CachedBibFile>();
+
 /**
  * Loads and parses BibTeX entries from `.bib` files referenced in the given LaTeX document text.
  * Resolves relative paths against `documentDir` (and optional `workspaceDirs` as fallback).
+ * Caches parsed entries by file path, `mtimeMs`, and `size` to avoid redundant disk reads on every keystroke.
  */
 export function loadBibtexEntriesForDocument(
   documentText: string,
@@ -426,8 +444,22 @@ export function loadBibtexEntriesForDocument(
     }
 
     try {
-      const content = fs.readFileSync(resolvedPath, 'utf8');
-      const parsed = parseBibtex(content, path.basename(resolvedPath));
+      const stat = fs.statSync(resolvedPath);
+      const cached = bibFileCache.get(resolvedPath);
+      let parsed: BibtexEntry[];
+
+      if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+        parsed = cached.entries;
+      } else {
+        const content = fs.readFileSync(resolvedPath, 'utf8');
+        parsed = parseBibtex(content, path.basename(resolvedPath));
+        bibFileCache.set(resolvedPath, {
+          mtimeMs: stat.mtimeMs,
+          size: stat.size,
+          entries: parsed,
+        });
+      }
+
       for (const entry of parsed) {
         if (!entriesByKey.has(entry.key)) {
           entriesByKey.set(entry.key, entry);

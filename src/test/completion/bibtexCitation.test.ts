@@ -74,6 +74,7 @@ suite('BibTeX Citation Completion Test Suite', () => {
     const bib = `
 @comment{This is a comment}
 @string{cvpr = "IEEE CVPR"}
+% @article{commented_out2020, title = {Should Be Ignored}, year = 2020}
 
 @article{vaswani2017attention,
   title = {Attention Is All You Need},
