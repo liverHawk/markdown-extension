@@ -6,6 +6,11 @@ import {
   loadBibtexEntriesForDocument,
 } from './bibtexCitation.js';
 import { BUILTIN_LATEX_COMMANDS, LatexCommandDefinition } from './builtinCommands.js';
+import {
+  extractUsepackageContext,
+  LatexPackageEntry,
+  resolveLatexPackages,
+} from './latexPackageCompletion.js';
 import { isInsideMathContext } from './mathContext.js';
 
 export interface ResolveLatexCommandsOptions {
@@ -127,6 +132,25 @@ export function createBibtexCompletionItem(
   return item;
 }
 
+export function createLatexPackageCompletionItem(
+  pkg: LatexPackageEntry,
+  replacementRange: vscode.Range
+): vscode.CompletionItem {
+  const kind = pkg.isLocal ? vscode.CompletionItemKind.File : vscode.CompletionItemKind.Module;
+  const item = new vscode.CompletionItem(pkg.name, kind);
+  item.insertText = pkg.name;
+  item.range = replacementRange;
+  item.detail = pkg.detail;
+  item.sortText = `${pkg.isLocal ? '0' : '1'}_${pkg.name}`;
+
+  const docLines = [`**Package:** \`${pkg.name}\``, `- ${pkg.detail}`];
+  if (pkg.sourceFile) {
+    docLines.push(`- **Source:** \`${pkg.sourceFile}\``);
+  }
+  item.documentation = new vscode.MarkdownString(docLines.join('\n'));
+  return item;
+}
+
 export class LatexCompletionProvider implements vscode.CompletionItemProvider {
   public provideCompletionItems(
     document: vscode.TextDocument,
@@ -163,7 +187,29 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
         .map((entry) => createBibtexCompletionItem(entry, replacementRange));
     }
 
-    // 2. Otherwise check if cursor is typing a LaTeX backslash command
+    // 2. Check if cursor is inside \usepackage{...} or \RequirePackage{...}
+    const usepackageContext = extractUsepackageContext(linePrefix);
+    if (usepackageContext) {
+      const documentDir =
+        document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
+      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+      const includeBuiltin = config.get<boolean>('includeBuiltinCommands', true);
+      const packages = resolveLatexPackages(documentDir, workspaceDirs, includeBuiltin);
+
+      const existingSet = new Set(usepackageContext.existingPackages);
+      const replacementRange = new vscode.Range(
+        position.line,
+        usepackageContext.startCharacter,
+        position.line,
+        position.character
+      );
+
+      return packages
+        .filter((pkg) => !existingSet.has(pkg.name))
+        .map((pkg) => createLatexPackageCompletionItem(pkg, replacementRange));
+    }
+
+    // 3. Otherwise check if cursor is typing a LaTeX backslash command
     const commandPrefix = extractCommandPrefix(linePrefix);
     if (!commandPrefix) {
       return undefined;
