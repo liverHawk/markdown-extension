@@ -33,6 +33,11 @@ MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチ
 8. **エディタショートカットキー**
    - エディタ上でタスク行にカーソルを置き、`Alt + X` を押すだけでチェック状態（`[ ]` ↔ `[x]`）をトグルできます。
 
+9. **LaTeX コマンドの入力候補（オートコンプリート）**
+   - LaTeXファイル（`.tex`）およびMarkdownファイルの数式内（`$...$` / `$$...$$`）で、`\` を入力すると頻出LaTeXコマンドの入力候補が表示されます。
+   - スニペット形式（例: `\frac{num}{den}` や `\begin{aligned} ... \end{aligned}`）に対応しており、`Tab` キーで引数間をスムーズに移動できます。
+   - VS Code の `settings.json` から独自のカスタムLaTeXコマンドをキーバリュー形式で自由に追加・上書きできます。
+
 ---
 
 ## 🚀 使い方 (Usage)
@@ -49,9 +54,23 @@ MarkdownのTODOリスト（`- [ ]` / `- [x]`）をGitHubスタイルのリッチ
 
 VS Code の設定画面（`Cmd+,` または `Ctrl+,`）から本拡張機能の動作をカスタマイズできます。
 
-| 設定項目                     | デフォルト値 | 説明                                                                         |
-| ---------------------------- | ------------ | ---------------------------------------------------------------------------- |
-| `checklistMarkdown.autoSave` | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか |
+| 設定項目                                         | デフォルト値 | 説明                                                                               |
+| ------------------------------------------------ | ------------ | ---------------------------------------------------------------------------------- |
+| `checklistMarkdown.autoSave`                     | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか       |
+| `checklistMarkdown.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか |
+| `checklistMarkdown.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                          |
+| `checklistMarkdown.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）       |
+
+### カスタムLaTeXコマンドの設定例 (`settings.json`)
+
+```json
+{
+  "checklistMarkdown.latex.customCommands": {
+    "myvec": "\\mathbf{${1:v}}",
+    "dudt": "\\frac{\\partial ${1:u}}{\\partial ${2:t}}"
+  }
+}
+```
 
 ---
 
