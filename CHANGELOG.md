@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- **LaTeX Section Number Inline Decorations**: Added subtle end-of-line section number annotations (`1`, `1.1`, `1.1.1`) on `\section`, `\subsection`, and `\subsubsection` lines in LaTeX documents (configurable via `paperflow.latex.showSectionNumbers`).
+- **LaTeX Section Folding**: Added hierarchical code folding (`FoldingRangeProvider`) for `\section`, `\subsection`, and `\subsubsection` blocks in LaTeX documents.
+
 ## [0.2.0] - 2026-11-02
 
 ### Changed

@@ -1,9 +1,20 @@
 import * as vscode from 'vscode';
 import { ChecklistPreviewPanel } from './preview/previewPanel.js';
 import { toggleTaskStatus } from './editor/taskToggler.js';
+import { SectionNumberDecorator } from './editor/sectionNumberDecorator.js';
+import { LatexSectionFoldingProvider } from './editor/latexFoldingProvider.js';
 import { LatexCompletionProvider } from './completion/latexCompletionProvider.js';
 
 export function activate(context: vscode.ExtensionContext) {
+  // Register LaTeX Section Number Decorator
+  const sectionNumberDecorator = new SectionNumberDecorator();
+
+  // Register LaTeX Section Folding Range Provider
+  const latexFoldingProvider = vscode.languages.registerFoldingRangeProvider(
+    [{ language: 'latex' }, { language: 'tex' }, { language: 'doctex' }],
+    new LatexSectionFoldingProvider()
+  );
+
   // Register LaTeX Completion Provider for LaTeX and Markdown files
   const latexCompletionProvider = vscode.languages.registerCompletionItemProvider(
     [{ language: 'latex' }, { language: 'tex' }, { language: 'doctex' }, { language: 'markdown' }],
@@ -61,6 +72,8 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(
+    sectionNumberDecorator,
+    latexFoldingProvider,
     latexCompletionProvider,
     openPreviewCommand,
     toggleCurrentTaskCommand,
