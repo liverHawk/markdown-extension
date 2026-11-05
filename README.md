@@ -17,6 +17,7 @@
    - Supports snippet-style completions (e.g., `\frac{num}{den}`, `\begin{aligned} ... \end{aligned}`) with smooth `Tab` navigation across placeholders.
    - **Package Completion (`\usepackage{...}` / `\RequirePackage{...}`)**: Suggests local `.sty` files in your workspace or current directory (automatically extracting `\ProvidesPackage` descriptions) alongside standard built-in LaTeX packages (`amsmath`, `graphicx`, `hyperref`, `tikz`, etc.).
    - **BibTeX Citation Completion (`\cite{...}` etc.)**: Automatically parses `.bib` files referenced via `\bibliography{...}` or `\addbibresource{...}` and suggests citation keys with paper title, author, and publication year inside `\cite{}`, `\citep{}`, `\citet{}`, `\parencite{}`, `\textcite{}`, and `\autocite{}` (including comma-separated multiple citations like `\cite{key1, key2}`).
+   - **Section Number Inline Display & Hierarchical Folding**: Displays subtle section numbers (`1`, `1.1`, `1.1.1`) at the end of `\section`, `\subsection`, and `\subsubsection` lines (ignoring `%` comments and starred `\section*` headings) and lets you fold/unfold each section hierarchically from the editor gutter.
    - **Custom Commands**: Define your own custom LaTeX commands and snippets in VS Code `settings.json`.
 
 2. **GitHub-Styled Interactive Checklist Preview**
@@ -99,6 +100,7 @@
    - スニペット形式（例: `\frac{num}{den}` や `\begin{aligned} ... \end{aligned}`）に対応しており、`Tab` キーで引数間をスムーズに移動できます。
    - **パッケージ補完（`\usepackage{...}` / `\RequirePackage{...}`）**: ワークスペースのルートや開いている `.tex` ファイルと同じディレクトリにある `.sty` ファイル（`\ProvidesPackage` の説明文も自動取得）と、定番の標準パッケージ（`amsmath`, `graphicx`, `hyperref`, `tikz` 等）を候補として表示します。
    - **BibTeX 引用補完（`\cite{...}` 等）**: ファイル内の `\bibliography{...}` や `\addbibresource{...}` で指定された `.bib` ファイルを自動解析し、`\cite{}` / `\citep{}` / `\citet{}` / `\parencite{}` / `\textcite{}` / `\autocite{}` 等の中で引用キー（および論文タイトル・著者名・発行年）を候補として表示します（`\cite{key1, key2}` のようなカンマ区切り複数指定にも対応）。
+   - **セクション番号のインライン表示 & 階層折りたたみ（Folding）**: `\section`, `\subsection`, `\subsubsection` の行末に薄い文字で階層番号（`1`, `1.1`, `1.1.1` など）を自動表示し（`%` コメント行や `\section*` 等は除外）、エディタ左端の折りたたみアイコンからセクション・サブセクション単位で開閉できます。
    - **カスタムコマンド**: VS Code の `settings.json` から独自のカスタムLaTeXコマンドをキーバリュー形式で自由に追加・上書きできます。
 
 2. **GitHubスタイルのインタラクティブプレビュー**
