@@ -53,6 +53,8 @@ suite('LaTeX Section Number Decorator Test Suite', () => {
       '\\subsubsection*{Unnumbered Subsubsection}',
       '\\subsubsection{Numbered Subsubsection}',
       '\\\\section{Escaped Backslash}',
+      '\\end{document}',
+      '\\section{Draft Section After End Document}',
     ].join('\n');
 
     const entries = computeLatexSectionNumbers(tex);

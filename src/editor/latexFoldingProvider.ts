@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LatexSectionLevel, stripLatexComment } from './sectionNumberDecorator.js';
+import { hasEndDocument, LatexSectionLevel, stripLatexComment } from './sectionNumberDecorator.js';
 
 export interface LatexFoldingSpan {
   /** 0-based start line number */
@@ -26,26 +26,6 @@ function resolveSectionEndLine(lines: string[], startLine: number, maxEndLine: n
     end--;
   }
   return end > startLine ? end : maxEndLine;
-}
-
-/**
- * Checks whether an uncommented LaTeX line contains an unescaped `\end{document}`.
- */
-function hasEndDocument(uncommentedLine: string): boolean {
-  const regex = /\\end\s*\{\s*document\s*\}/g;
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(uncommentedLine)) !== null) {
-    let backslashCount = 0;
-    let j = match.index - 1;
-    while (j >= 0 && uncommentedLine[j] === '\\') {
-      backslashCount++;
-      j--;
-    }
-    if (backslashCount % 2 === 0) {
-      return true;
-    }
-  }
-  return false;
 }
 
 /**
@@ -89,7 +69,7 @@ export function computeLatexSectionFoldingSpans(text: string): LatexFoldingSpan[
 
     if (hasEndDocument(uncommented)) {
       closeSectionsAtOrBelow(1, lineIndex - 1);
-      continue;
+      break;
     }
 
     sectionRegex.lastIndex = 0;

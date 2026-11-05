@@ -21,6 +21,8 @@ suite('LaTeX Section Folding Provider Test Suite', () => {
       '\\section*{Acknowledgments}', // 14
       'Thanks to everyone.', // 15
       '\\end{document}', // 16
+      '\\section{Draft After End Document}', // 17
+      'Ignored draft content.', // 18
     ].join('\n');
 
     const spans = computeLatexSectionFoldingSpans(tex);

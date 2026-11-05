@@ -34,12 +34,33 @@ export function stripLatexComment(line: string): string {
 }
 
 /**
+ * Checks whether an uncommented LaTeX line contains an unescaped `\end{document}`.
+ */
+export function hasEndDocument(uncommentedLine: string): boolean {
+  const regex = /\\end\s*\{\s*document\s*\}/g;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(uncommentedLine)) !== null) {
+    let backslashCount = 0;
+    let j = match.index - 1;
+    while (j >= 0 && uncommentedLine[j] === '\\') {
+      backslashCount++;
+      j--;
+    }
+    if (backslashCount % 2 === 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Extracts all numbered `\section`, `\subsection`, and `\subsubsection` commands
  * from a LaTeX document text and computes their hierarchical section numbers.
  *
  * - Ignores `%` comments.
  * - Ignores starred commands (`\section*`, `\subsection*`, `\subsubsection*`).
  * - Ignores escaped backslashes (`\\section`).
+ * - Stops scanning at `\end{document}`.
  */
 export function computeLatexSectionNumbers(text: string): LatexSectionNumberEntry[] {
   const lines = text.split(/\r?\n/);
@@ -55,6 +76,10 @@ export function computeLatexSectionNumbers(text: string): LatexSectionNumberEntr
     const uncommented = stripLatexComment(lines[lineIndex]);
     if (!uncommented.includes('\\')) {
       continue;
+    }
+
+    if (hasEndDocument(uncommented)) {
+      break;
     }
 
     commandRegex.lastIndex = 0;
@@ -135,6 +160,9 @@ export class SectionNumberDecorator implements vscode.Disposable {
         }
       }),
       vscode.workspace.onDidChangeTextDocument((event) => {
+        if (!LATEX_LANGUAGE_IDS.has(event.document.languageId)) {
+          return;
+        }
         for (const editor of vscode.window.visibleTextEditors) {
           if (editor.document.uri.toString() === event.document.uri.toString()) {
             this.updateEditor(editor);
