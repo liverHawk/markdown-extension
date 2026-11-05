@@ -58,12 +58,13 @@
 
 ### ⚙️ Settings
 
-| Setting                                  | Default | Description                                                                       |
-| ---------------------------------------- | ------- | --------------------------------------------------------------------------------- |
-| `paperflow.autoSave`                     | `true`  | Automatically save the Markdown document when a task checkbox status is changed.  |
-| `paperflow.latex.enableCompletion`       | `true`  | Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks.      |
-| `paperflow.latex.includeBuiltinCommands` | `true`  | Include built-in common LaTeX commands in autocompletion.                         |
-| `paperflow.latex.customCommands`         | `{}`    | User-defined custom LaTeX commands as `{ "command": "snippet" }` key-value pairs. |
+| Setting                                  | Default | Description                                                                         |
+| ---------------------------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `paperflow.autoSave`                     | `true`  | Automatically save the Markdown document when a task checkbox status is changed.    |
+| `paperflow.latex.enableCompletion`       | `true`  | Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks.        |
+| `paperflow.latex.includeBuiltinCommands` | `true`  | Include built-in common LaTeX commands in autocompletion.                           |
+| `paperflow.latex.customCommands`         | `{}`    | User-defined custom LaTeX commands as `{ "command": "snippet" }` key-value pairs.   |
+| `paperflow.latex.showSectionNumbers`     | `true`  | Display inline hierarchical section numbers (`1`, `1.1`, `1.1.1`) on section lines. |
 
 #### Example: Custom LaTeX Commands (`settings.json`)
 
@@ -146,6 +147,7 @@ VS Code の設定画面（`Cmd+,` または `Ctrl+,`）から本拡張機能の�
 | `paperflow.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか |
 | `paperflow.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                          |
 | `paperflow.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）       |
+| `paperflow.latex.showSectionNumbers`     | `true`       | LaTeXの `\section` / `\subsection` / `\subsubsection` 行末に階層番号を表示するか   |
 
 #### カスタムLaTeXコマンドの設定例 (`settings.json`)
 

@@ -74,6 +74,11 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "paperflow.latex.showSectionNumbers": {
+          "type": "boolean",
+          "default": true,
+          "description": "Display inline hierarchical section numbers (e.g. 1, 1.1, 1.1.1) at the end of \\section, \\subsection, and \\subsubsection lines in LaTeX documents."
         }
       }
     },
