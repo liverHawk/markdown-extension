@@ -75,6 +75,32 @@
             "type": "string"
           }
         },
+        "paperflow.latex.loadCommandsFromFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan local .sty/.tex files and TeX Live packages for \\newcommand, \\DeclareMathOperator, and macro definitions."
+        },
+        "paperflow.latex.commandFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional .tex/.sty/.cls files or directories to scan for LaTeX command definitions (relative to workspace root or absolute paths)."
+        },
+        "paperflow.latex.texliveRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Root directory of TeX Live installation (e.g. /usr/local/texlive/2026 or C:\\texlive\\2026). Leave empty to auto-detect."
+        },
+        "paperflow.latex.texliveFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Package names from TeX Live to always scan for command completions (e.g. [\"amsmath\", \"physics\"])."
+        },
         "paperflow.latex.showSectionNumbers": {
           "type": "boolean",
           "default": true,

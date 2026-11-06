@@ -65,6 +65,10 @@
 | `paperflow.latex.enableCompletion`       | `true`  | Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks.        |
 | `paperflow.latex.includeBuiltinCommands` | `true`  | Include built-in common LaTeX commands in autocompletion.                           |
 | `paperflow.latex.customCommands`         | `{}`    | User-defined custom LaTeX commands as `{ "command": "snippet" }` key-value pairs.   |
+| `paperflow.latex.loadCommandsFromFiles`  | `true`  | Automatically scan local `.sty`/`.tex` files and TeX Live packages for macros.      |
+| `paperflow.latex.commandFiles`           | `[]`    | Additional `.tex`/`.sty`/`.cls` files or directories to scan for commands.          |
+| `paperflow.latex.texliveRoot`            | `""`    | TeX Live root directory (e.g. `/usr/local/texlive/2026` or `C:\texlive\2026`).      |
+| `paperflow.latex.texliveFiles`           | `[]`    | TeX Live package names to always scan (e.g. `["amsmath", "physics"]`).              |
 | `paperflow.latex.showSectionNumbers`     | `true`  | Display inline hierarchical section numbers (`1`, `1.1`, `1.1.1`) on section lines. |
 
 #### Example: Custom LaTeX Commands (`settings.json`)
@@ -143,13 +147,17 @@
 
 VS Code の設定画面（`Cmd+,` または `Ctrl+,`）から本拡張機能の動作をカスタマイズできます。
 
-| 設定項目                                 | デフォルト値 | 説明                                                                               |
-| ---------------------------------------- | ------------ | ---------------------------------------------------------------------------------- |
-| `paperflow.autoSave`                     | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか       |
-| `paperflow.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか |
-| `paperflow.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                          |
-| `paperflow.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）       |
-| `paperflow.latex.showSectionNumbers`     | `true`       | LaTeXの `\section` / `\subsection` / `\subsubsection` 行末に階層番号を表示するか   |
+| 設定項目                                 | デフォルト値 | 説明                                                                                |
+| ---------------------------------------- | ------------ | ----------------------------------------------------------------------------------- |
+| `paperflow.autoSave`                     | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか        |
+| `paperflow.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか  |
+| `paperflow.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                           |
+| `paperflow.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）        |
+| `paperflow.latex.loadCommandsFromFiles`  | `true`       | ローカルの `.sty`/`.tex` および TeX Live パッケージから `\newcommand` 等を自動読込  |
+| `paperflow.latex.commandFiles`           | `[]`         | 追加でコマンド定義を読み込む `.tex`/`.sty`/`.cls` ファイルまたはディレクトリの配列  |
+| `paperflow.latex.texliveRoot`            | `""`         | TeX Live のルート（例: `/usr/local/texlive/2026`, `C:\texlive\2026`）。空で自動検出 |
+| `paperflow.latex.texliveFiles`           | `[]`         | TeX Live から常時読み込むパッケージ名の配列（例: `["amsmath", "physics"]`）         |
+| `paperflow.latex.showSectionNumbers`     | `true`       | LaTeXの `\section` / `\subsection` / `\subsubsection` 行末に階層番号を表示するか    |
 
 #### カスタムLaTeXコマンドの設定例 (`settings.json`)
 
