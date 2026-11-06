@@ -268,15 +268,17 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
         document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
       const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
 
-      const configuredTexliveRoot = config.get<string>('texliveRoot', '');
       const configuredTexlivePackages = config.get<string[]>('texliveFiles', []);
-      const texliveRoot = detectTexliveRoot(configuredTexliveRoot);
+      const docPackages = extractDocumentTexlivePackages(fullText);
+      const requestedPackages = [...configuredTexlivePackages, ...docPackages];
 
-      if (texliveRoot) {
-        const docPackages = extractDocumentTexlivePackages(fullText);
-        const requestedPackages = [...configuredTexlivePackages, ...docPackages];
-        const texliveFilePaths = resolveTexlivePackageFiles(requestedPackages, texliveRoot);
-        texliveCommands = loadCommandsFromFiles(texliveFilePaths);
+      if (requestedPackages.length > 0) {
+        const configuredTexliveRoot = config.get<string>('texliveRoot', '');
+        const texliveRoot = detectTexliveRoot(configuredTexliveRoot);
+        if (texliveRoot) {
+          const texliveFilePaths = resolveTexlivePackageFiles(requestedPackages, texliveRoot);
+          texliveCommands = loadCommandsFromFiles(texliveFilePaths);
+        }
       }
 
       const configuredCommandFiles = config.get<string[]>('commandFiles', []);

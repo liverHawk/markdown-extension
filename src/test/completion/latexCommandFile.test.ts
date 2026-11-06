@@ -28,6 +28,7 @@ suite('LaTeX Command File & TeX Live Completion Test Suite', () => {
       '\\newcommand*\\norm[1]{\\left\\lVert #1 \\right\\rVert}',
       '\\renewcommand{\\inner}[2]{\\langle #1, #2 \\rangle}',
       '\\providecommand{\\deriv}[2][x]{\\frac{d #2}{d #1}}',
+      '\\newcommand{\\interval}[2][{[0,1]}]{#1 \\to #2}',
       '\\DeclareRobustCommand{\\robustcmd}[1]{\\textbf{#1}}',
       '\\DeclareMathOperator{\\argmin}{arg\\,min}',
       '\\DeclareMathOperator*{\\argmax}{arg\\,max}',
@@ -65,6 +66,10 @@ suite('LaTeX Command File & TeX Live Completion Test Suite', () => {
     const derivCmd = byName.get('deriv');
     assert.ok(derivCmd);
     assert.strictEqual(derivCmd.snippet, 'deriv[${1:x}]{${2:arg2}}');
+
+    const intervalCmd = byName.get('interval');
+    assert.ok(intervalCmd);
+    assert.strictEqual(intervalCmd.snippet, 'interval[${1:{[0,1]\\}}]{${2:arg2}}');
 
     const robustCmd = byName.get('robustcmd');
     assert.ok(robustCmd);

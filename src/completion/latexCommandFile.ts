@@ -71,7 +71,8 @@ function readBracedGroup(
 }
 
 /**
- * Reads a `[...]` optional group starting at `startIndex` (which must point to `[`).
+ * Reads a `[...]` optional group starting at `startIndex` (which must point to `[`),
+ * ignoring `]` characters that are enclosed inside `{...}` braces.
  */
 function readBracketGroup(
   text: string,
@@ -80,22 +81,31 @@ function readBracketGroup(
   if (text[startIndex] !== '[') {
     return undefined;
   }
-  let depth = 0;
+  let bracketDepth = 0;
+  let braceDepth = 0;
   for (let i = startIndex; i < text.length; i++) {
     const ch = text[i];
     if (ch === '\\') {
       i++;
       continue;
     }
-    if (ch === '[') {
-      depth++;
-    } else if (ch === ']') {
-      depth--;
-      if (depth === 0) {
-        return {
-          content: text.slice(startIndex + 1, i),
-          nextIndex: i + 1,
-        };
+    if (ch === '{') {
+      braceDepth++;
+    } else if (ch === '}') {
+      if (braceDepth > 0) {
+        braceDepth--;
+      }
+    } else if (braceDepth === 0) {
+      if (ch === '[') {
+        bracketDepth++;
+      } else if (ch === ']') {
+        bracketDepth--;
+        if (bracketDepth === 0) {
+          return {
+            content: text.slice(startIndex + 1, i),
+            nextIndex: i + 1,
+          };
+        }
       }
     }
   }
