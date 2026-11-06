@@ -18,6 +18,7 @@
    - **Package Completion (`\usepackage{...}` / `\RequirePackage{...}`)**: Suggests local `.sty` files in your workspace or current directory (automatically extracting `\ProvidesPackage` descriptions) alongside standard built-in LaTeX packages (`amsmath`, `graphicx`, `hyperref`, `tikz`, etc.).
    - **BibTeX Citation Completion (`\cite{...}` etc.)**: Automatically parses `.bib` files referenced via `\bibliography{...}` or `\addbibresource{...}` and suggests citation keys with paper title, author, and publication year inside `\cite{}`, `\citep{}`, `\citet{}`, `\parencite{}`, `\textcite{}`, and `\autocite{}` (including comma-separated multiple citations like `\cite{key1, key2}`).
    - **Section Number Inline Display & Hierarchical Folding**: Displays subtle section numbers (`1`, `1.1`, `1.1.1`) at the end of `\section`, `\subsection`, and `\subsubsection` lines (ignoring `%` comments and starred `\section*` headings) and lets you fold/unfold each section hierarchically from the editor gutter.
+   - **File & TeX Live Macro Completion**: Automatically scans the active document, local `.sty`/`.tex`/`.cls` files, and installed TeX Live packages (auto-detecting paths like `/usr/local/texlive/2026` or `C:\texlive\2026`) for `\newcommand`, `\DeclareMathOperator`, `\DeclarePairedDelimiter`, and `\def` definitions.
    - **Custom Commands**: Define your own custom LaTeX commands and snippets in VS Code `settings.json`.
 
 2. **GitHub-Styled Interactive Checklist Preview**
@@ -65,6 +66,10 @@
 | `paperflow.latex.enableCompletion`       | `true`  | Enable LaTeX command autocompletion in LaTeX files and Markdown math blocks.        |
 | `paperflow.latex.includeBuiltinCommands` | `true`  | Include built-in common LaTeX commands in autocompletion.                           |
 | `paperflow.latex.customCommands`         | `{}`    | User-defined custom LaTeX commands as `{ "command": "snippet" }` key-value pairs.   |
+| `paperflow.latex.loadCommandsFromFiles`  | `true`  | Automatically scan local `.sty`/`.tex` files and TeX Live packages for macros.      |
+| `paperflow.latex.commandFiles`           | `[]`    | Additional `.tex`/`.sty`/`.cls` files or directories to scan for commands.          |
+| `paperflow.latex.texliveRoot`            | `""`    | TeX Live root directory (e.g. `/usr/local/texlive/2026` or `C:\texlive\2026`).      |
+| `paperflow.latex.texliveFiles`           | `[]`    | TeX Live package names to always scan (e.g. `["amsmath", "physics"]`).              |
 | `paperflow.latex.showSectionNumbers`     | `true`  | Display inline hierarchical section numbers (`1`, `1.1`, `1.1.1`) on section lines. |
 
 #### Example: Custom LaTeX Commands (`settings.json`)
@@ -101,6 +106,7 @@
    - **パッケージ補完（`\usepackage{...}` / `\RequirePackage{...}`）**: ワークスペースのルートや開いている `.tex` ファイルと同じディレクトリにある `.sty` ファイル（`\ProvidesPackage` の説明文も自動取得）と、定番の標準パッケージ（`amsmath`, `graphicx`, `hyperref`, `tikz` 等）を候補として表示します。
    - **BibTeX 引用補完（`\cite{...}` 等）**: ファイル内の `\bibliography{...}` や `\addbibresource{...}` で指定された `.bib` ファイルを自動解析し、`\cite{}` / `\citep{}` / `\citet{}` / `\parencite{}` / `\textcite{}` / `\autocite{}` 等の中で引用キー（および論文タイトル・著者名・発行年）を候補として表示します（`\cite{key1, key2}` のようなカンマ区切り複数指定にも対応）。
    - **セクション番号のインライン表示 & 階層折りたたみ（Folding）**: `\section`, `\subsection`, `\subsubsection` の行末に薄い文字で階層番号（`1`, `1.1`, `1.1.1` など）を自動表示し（`%` コメント行や `\section*` 等は除外）、エディタ左端の折りたたみアイコンからセクション・サブセクション単位で開閉できます。
+   - **ファイル & TeX Live マクロの自動補完**: 編集中ドキュメント、ローカルの `.sty`/`.tex`/`.cls` ファイル、および TeX Live のパッケージ（`/usr/local/texlive/2026` や `C:\texlive\2026` 等を自動検出）から `\newcommand`・`\DeclareMathOperator`・`\DeclarePairedDelimiter`・`\def` の定義を自動解析して入力候補に追加します。
    - **カスタムコマンド**: VS Code の `settings.json` から独自のカスタムLaTeXコマンドをキーバリュー形式で自由に追加・上書きできます。
 
 2. **GitHubスタイルのインタラクティブプレビュー**
@@ -143,13 +149,17 @@
 
 VS Code の設定画面（`Cmd+,` または `Ctrl+,`）から本拡張機能の動作をカスタマイズできます。
 
-| 設定項目                                 | デフォルト値 | 説明                                                                               |
-| ---------------------------------------- | ------------ | ---------------------------------------------------------------------------------- |
-| `paperflow.autoSave`                     | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか       |
-| `paperflow.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか |
-| `paperflow.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                          |
-| `paperflow.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）       |
-| `paperflow.latex.showSectionNumbers`     | `true`       | LaTeXの `\section` / `\subsection` / `\subsubsection` 行末に階層番号を表示するか   |
+| 設定項目                                 | デフォルト値 | 説明                                                                                |
+| ---------------------------------------- | ------------ | ----------------------------------------------------------------------------------- |
+| `paperflow.autoSave`                     | `true`       | チェックボックスの状態を変更した際に、Markdownファイルを自動保存するかどうか        |
+| `paperflow.latex.enableCompletion`       | `true`       | LaTeXファイルおよびMarkdownの数式ブロック内でLaTeXコマンドの入力補完を有効にするか  |
+| `paperflow.latex.includeBuiltinCommands` | `true`       | 標準搭載の一般的なLaTeXコマンドを入力候補に含めるかどうか                           |
+| `paperflow.latex.customCommands`         | `{}`         | ユーザー定義のカスタムLaTeXコマンド（`{ "コマンド名": "スニペット" }` 形式）        |
+| `paperflow.latex.loadCommandsFromFiles`  | `true`       | ローカルの `.sty`/`.tex` および TeX Live パッケージから `\newcommand` 等を自動読込  |
+| `paperflow.latex.commandFiles`           | `[]`         | 追加でコマンド定義を読み込む `.tex`/`.sty`/`.cls` ファイルまたはディレクトリの配列  |
+| `paperflow.latex.texliveRoot`            | `""`         | TeX Live のルート（例: `/usr/local/texlive/2026`, `C:\texlive\2026`）。空で自動検出 |
+| `paperflow.latex.texliveFiles`           | `[]`         | TeX Live から常時読み込むパッケージ名の配列（例: `["amsmath", "physics"]`）         |
+| `paperflow.latex.showSectionNumbers`     | `true`       | LaTeXの `\section` / `\subsection` / `\subsubsection` 行末に階層番号を表示するか    |
 
 #### カスタムLaTeXコマンドの設定例 (`settings.json`)
 

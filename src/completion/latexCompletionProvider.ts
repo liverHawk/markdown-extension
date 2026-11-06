@@ -7,19 +7,31 @@ import {
 } from './bibtexCitation.js';
 import { BUILTIN_LATEX_COMMANDS, LatexCommandDefinition } from './builtinCommands.js';
 import {
+  loadCommandsFromFiles,
+  parseLatexCommandDefinitions,
+  resolveCommandFilePaths,
+} from './latexCommandFile.js';
+import {
   extractUsepackageContext,
   LatexPackageEntry,
   resolveLatexPackages,
 } from './latexPackageCompletion.js';
 import { isInsideMathContext } from './mathContext.js';
+import {
+  detectTexliveRoot,
+  extractDocumentTexlivePackages,
+  resolveTexlivePackageFiles,
+} from './texliveLocator.js';
 
 export interface ResolveLatexCommandsOptions {
   isMarkdown?: boolean;
+  texliveCommands?: readonly LatexCommandDefinition[];
+  fileCommands?: readonly LatexCommandDefinition[];
 }
 
 /**
- * Merges built-in LaTeX commands with user-defined custom commands from settings.
- * Custom commands override built-in commands with the same command name.
+ * Merges built-in LaTeX commands, TeX Live commands, local file commands, and user-defined custom commands.
+ * Priority: built-in < TeX Live < local file < customCommands.
  */
 export function resolveLatexCommands(
   includeBuiltin: boolean,
@@ -31,6 +43,24 @@ export function resolveLatexCommands(
 
   if (includeBuiltin) {
     for (const cmd of BUILTIN_LATEX_COMMANDS) {
+      if (isMarkdown && cmd.latexOnly) {
+        continue;
+      }
+      commandMap.set(cmd.command, cmd);
+    }
+  }
+
+  if (options?.texliveCommands) {
+    for (const cmd of options.texliveCommands) {
+      if (isMarkdown && cmd.latexOnly) {
+        continue;
+      }
+      commandMap.set(cmd.command, cmd);
+    }
+  }
+
+  if (options?.fileCommands) {
+    for (const cmd of options.fileCommands) {
       if (isMarkdown && cmd.latexOnly) {
         continue;
       }
@@ -216,10 +246,10 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
     }
 
     const isMarkdown = document.languageId === 'markdown';
+    const fullText = document.getText();
 
     // For Markdown documents, only provide completions inside math contexts ($...$ or $$...$$)
     if (isMarkdown) {
-      const fullText = document.getText();
       const offset = document.offsetAt(position);
       if (!isInsideMathContext(fullText, offset)) {
         return undefined;
@@ -228,7 +258,58 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
 
     const includeBuiltin = config.get<boolean>('includeBuiltinCommands', true);
     const customCommands = config.get<Record<string, string>>('customCommands', {});
-    const definitions = resolveLatexCommands(includeBuiltin, customCommands, { isMarkdown });
+    const enableFileCommands = config.get<boolean>('loadCommandsFromFiles', true);
+
+    let texliveCommands: LatexCommandDefinition[] = [];
+    let fileCommands: LatexCommandDefinition[] = [];
+
+    if (enableFileCommands) {
+      const documentDir =
+        document.uri.scheme === 'file' ? path.dirname(document.uri.fsPath) : undefined;
+      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+
+      const configuredTexlivePackages = config.get<string[]>('texliveFiles', []);
+      const docPackages = extractDocumentTexlivePackages(fullText);
+      const requestedPackages = [...configuredTexlivePackages, ...docPackages];
+
+      if (requestedPackages.length > 0) {
+        const configuredTexliveRoot = config.get<string>('texliveRoot', '');
+        const texliveRoot = detectTexliveRoot(configuredTexliveRoot);
+        if (texliveRoot) {
+          const texliveFilePaths = resolveTexlivePackageFiles(requestedPackages, texliveRoot);
+          texliveCommands = loadCommandsFromFiles(texliveFilePaths);
+        }
+      }
+
+      const configuredCommandFiles = config.get<string[]>('commandFiles', []);
+      const currentFilePath = document.uri.scheme === 'file' ? document.uri.fsPath : undefined;
+      const localFilePaths = resolveCommandFilePaths(
+        fullText,
+        documentDir,
+        workspaceDirs,
+        configuredCommandFiles,
+        currentFilePath
+      );
+      const loadedFromDisk = loadCommandsFromFiles(localFilePaths);
+      const currentDocLabel =
+        document.uri.scheme === 'file' ? path.basename(document.uri.fsPath) : 'document';
+      const inDocumentCommands = parseLatexCommandDefinitions(fullText, currentDocLabel);
+
+      const mergedFileMap = new Map<string, LatexCommandDefinition>();
+      for (const cmd of loadedFromDisk) {
+        mergedFileMap.set(cmd.command, cmd);
+      }
+      for (const cmd of inDocumentCommands) {
+        mergedFileMap.set(cmd.command, cmd);
+      }
+      fileCommands = Array.from(mergedFileMap.values());
+    }
+
+    const definitions = resolveLatexCommands(includeBuiltin, customCommands, {
+      isMarkdown,
+      texliveCommands,
+      fileCommands,
+    });
 
     const replacementRange = new vscode.Range(
       position.line,

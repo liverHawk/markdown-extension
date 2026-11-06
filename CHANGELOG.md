@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-06
+
+### Added
+
+- **File-Based & TeX Live LaTeX Command Completion**: Automatically parses `\newcommand`, `\renewcommand`, `\providecommand`, `\DeclareRobustCommand`, `\DeclareMathOperator`, `\DeclarePairedDelimiter`, and `\def` from the active document, local `.sty`/`.tex`/`.cls` files, and TeX Live packages (`\usepackage`, `\RequirePackage`, `\documentclass`) with `mtime + size` caching.
+- **New LaTeX Completion Settings**: Added `paperflow.latex.loadCommandsFromFiles`, `paperflow.latex.commandFiles`, `paperflow.latex.texliveRoot`, and `paperflow.latex.texliveFiles`.
+
 ## [0.2.1] - 2026-11-05
 
 ### Added
