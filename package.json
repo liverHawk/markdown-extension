@@ -1,7 +1,7 @@
 {
   "name": "paperflow",
   "displayName": "PaperFlow: LaTeX & Markdown Checklist",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "LaTeX completion (commands, packages, BibTeX citations) and interactive Markdown checklist preview for academic writing and task management.",
   "categories": [
     "Other",
