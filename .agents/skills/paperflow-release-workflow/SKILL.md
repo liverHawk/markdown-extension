@@ -96,7 +96,7 @@ Trigger this skill with prompts such as:
 1. **Mandatory Approval Gate**: Always ask the user for confirmation before merging the PR and running the release script.
 2. Once approved by the user:
    - Ensure the PR is merged into `main` (`gh pr merge <pr-number> --merge --delete-branch` or confirm manual merge) and checkout up-to-date `main` (`git checkout main && git pull origin main`).
-   - Run the release script with the determined SemVer level:
+   - Run the release script with the determined SemVer level (Note: `scripts/release.sh` strictly requires the current branch to be `main` and exits with an error on any other branch):
      ```bash
      pnpm run release <patch|minor|major>
      ```

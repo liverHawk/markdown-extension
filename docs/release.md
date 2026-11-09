@@ -31,7 +31,9 @@ pnpm run release 0.2.0
 
 `pnpm run release <引数>` を叩くと、以下のステップが順に自動実行されます。
 
-1. **事前検証 (`pretest`)**:
+1. **事前検証 (`pretest` & ブランチ確認)**:
+   - 現在のブランチが `main` であることを確認（`main` 以外ではエラー終了）
+   - 未コミット変更がないことを確認
    - `tsc` によるコンパイルチェック
    - `oxlint` によるリント検証
    - `oxfmt --check` によるコード整形検証
@@ -97,6 +99,11 @@ export OVSX_PAT="your-access-token"
 ---
 
 ## ❓ トラブルシューティング
+
+### Q. 「Release command can only be run on the 'main' branch」と怒られる
+
+フィーチャーブランチ等での誤リリースを防ぐため、`main` ブランチ以外ではリリーススクリプトが実行できないよう保護されています。
+PR を `main` にマージし、`git checkout main && git pull origin main` を実行してからリリースしてください。
 
 ### Q. 「Working tree has uncommitted changes」と怒られる
 

@@ -21,7 +21,15 @@ if [[ "$BUMP_TYPE" != "patch" && "$BUMP_TYPE" != "minor" && "$BUMP_TYPE" != "maj
   exit 1
 fi
 
-# 1. 未コミット変更の事前チェック
+# 1. ブランチの事前チェック (main ブランチ以外では実行不可)
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$CURRENT_BRANCH" != "main" ]]; then
+  echo "❌ Error: Release command can only be run on the 'main' branch (current branch: '$CURRENT_BRANCH')."
+  echo "Please merge your PR into 'main' and switch to 'main' before releasing."
+  exit 1
+fi
+
+# 2. 未コミット変更の事前チェック
 if ! git diff-index --quiet HEAD --; then
   echo "❌ Error: Working tree has uncommitted changes. Please commit or stash them before releasing."
   exit 1
