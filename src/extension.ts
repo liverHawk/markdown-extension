@@ -22,7 +22,9 @@ export function activate(context: vscode.ExtensionContext) {
     '\\',
     '{',
     ',',
-    ' '
+    ' ',
+    ':',
+    '['
   );
 
   // Command: Open Interactive Preview

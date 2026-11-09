@@ -16,6 +16,7 @@ import {
   LatexPackageEntry,
   resolveLatexPackages,
 } from './latexPackageCompletion.js';
+import { extractRefContext, LatexLabelEntry, loadLabelsForDocument } from './latexRefCompletion.js';
 import { isInsideMathContext } from './mathContext.js';
 import {
   detectTexliveRoot,
@@ -181,6 +182,33 @@ export function createLatexPackageCompletionItem(
   return item;
 }
 
+export function createLatexRefCompletionItem(
+  entry: LatexLabelEntry,
+  replacementRange: vscode.Range
+): vscode.CompletionItem {
+  const item = new vscode.CompletionItem(entry.key, vscode.CompletionItemKind.Reference);
+  item.insertText = entry.key;
+  item.range = replacementRange;
+
+  const locationStr = entry.sourceFile ? `${entry.sourceFile}:${entry.line}` : `line ${entry.line}`;
+  item.detail = entry.context ? `${entry.context} (${locationStr})` : locationStr;
+
+  const filterTokens = [entry.key, entry.context, entry.sourceFile].filter(Boolean);
+  item.filterText = filterTokens.join(' ');
+
+  const docLines: string[] = [`**Label:** \`${entry.key}\``];
+  if (entry.context) {
+    docLines.push(`- **Context:** ${entry.context}`);
+  }
+  if (entry.sourceFile) {
+    docLines.push(`- **Source:** \`${entry.sourceFile}\` (line ${entry.line})`);
+  } else {
+    docLines.push(`- **Line:** ${entry.line}`);
+  }
+  item.documentation = new vscode.MarkdownString(docLines.join('\n'));
+  return item;
+}
+
 export class LatexCompletionProvider implements vscode.CompletionItemProvider {
   public provideCompletionItems(
     document: vscode.TextDocument,
@@ -239,7 +267,33 @@ export class LatexCompletionProvider implements vscode.CompletionItemProvider {
         .map((pkg) => createLatexPackageCompletionItem(pkg, replacementRange));
     }
 
-    // 3. Otherwise check if cursor is typing a LaTeX backslash command
+    // 3. Check if cursor is inside a cross-reference command like \ref{...}, \eqref{...}, \cref{...}
+    const refContext = extractRefContext(linePrefix);
+    if (refContext) {
+      const currentFilePath = document.uri.scheme === 'file' ? document.uri.fsPath : undefined;
+      const documentDir = currentFilePath ? path.dirname(currentFilePath) : undefined;
+      const workspaceDirs = (vscode.workspace.workspaceFolders ?? []).map((f) => f.uri.fsPath);
+      const labels = loadLabelsForDocument(
+        document.getText(),
+        documentDir,
+        workspaceDirs,
+        currentFilePath
+      );
+
+      const existingSet = new Set(refContext.existingKeys);
+      const replacementRange = new vscode.Range(
+        position.line,
+        refContext.startCharacter,
+        position.line,
+        position.character
+      );
+
+      return labels
+        .filter((entry) => !existingSet.has(entry.key))
+        .map((entry) => createLatexRefCompletionItem(entry, replacementRange));
+    }
+
+    // 4. Otherwise check if cursor is typing a LaTeX backslash command
     const commandPrefix = extractCommandPrefix(linePrefix);
     if (!commandPrefix) {
       return undefined;
