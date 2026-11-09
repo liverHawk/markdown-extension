@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-09
+
+### Added
+
+- **LaTeX Cross-Reference (`\ref`) Label Autocompletion**: Added completion for `\label{...}` keys (with section heading, figure/table caption, or equation context preview and source file/line metadata) inside `\ref`, `\eqref`, `\pageref`, `\autoref`, `\nameref`, `\cref`, `\Cref`, `\cpageref`, `\vref`, and `\hyperref[...]` (including comma-separated multi-key references).
+- **Multi-File `.tex` Label Discovery**: Automatically collects `\label{...}` definitions across split `.tex` files referenced via `\input`, `\include`, `\subfile`, `\import`, `% !TEX root` magic comments, and project/workspace directories with `mtime + size` caching.
+
 ## [0.3.0] - 2026-11-06
 
 ### Added
